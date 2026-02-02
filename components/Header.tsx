@@ -8,13 +8,13 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-      <nav className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-dark/95 backdrop-blur-md border-b border-light/10">
+      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
             href="/"
-            className="text-xl font-bold text-gray-900 dark:text-white"
+            className="text-xl font-bold text-teal hover:text-rose transition-colors"
           >
             MyBlog
           </Link>
@@ -23,27 +23,65 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-light/80 hover:text-teal transition-colors"
             >
               Home
             </Link>
             <Link
               href="/blog"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-light/80 hover:text-teal transition-colors"
             >
               Blog
             </Link>
             <Link
               href="/about"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-light/80 hover:text-teal transition-colors"
             >
               About
             </Link>
             <ThemeToggle />
+            <Link
+              href="/admin"
+              className="p-2 text-light/80 hover:text-rose transition-colors"
+              title="관리자"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 md:hidden">
+            <Link
+              href="/admin"
+              className="p-2 text-light/80 hover:text-rose transition-colors"
+              title="관리자"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </Link>
             <ThemeToggle />
             <button
               className="p-2"
@@ -51,7 +89,7 @@ export default function Header() {
               aria-label="Toggle menu"
             >
               <svg
-                className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                className="w-6 h-6 text-light/80"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -78,25 +116,25 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="md:hidden py-4 border-t border-light/10">
             <div className="flex flex-col space-y-4">
               <Link
                 href="/"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-light/80 hover:text-teal transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/blog"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-light/80 hover:text-teal transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Blog
               </Link>
               <Link
                 href="/about"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-light/80 hover:text-teal transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About

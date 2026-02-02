@@ -7,22 +7,22 @@ export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <header className="mb-12">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl font-bold text-light mb-4">
           About
         </h1>
       </header>
 
-      <div className="prose prose-gray dark:prose-invert max-w-none">
+      <div className="prose prose-invert prose-teal max-w-none">
         {/* Profile */}
         <div className="flex flex-col sm:flex-row items-center gap-6 mb-12 not-prose">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-teal to-rose flex items-center justify-center text-light text-4xl font-bold">
             M
           </div>
           <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-2xl font-bold text-light">
               Blog Owner
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
+            <p className="text-light/70 mt-2">
               개발과 일상을 기록하는 블로거
             </p>
           </div>

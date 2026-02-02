@@ -37,20 +37,20 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="min-h-screen flex items-center justify-center bg-dark">
+      <div className="max-w-md w-full space-y-8 p-8 bg-light/5 border border-light/10 rounded-lg">
         <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-center text-3xl font-bold text-light">
             관리자 로그인
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-center text-sm text-light/50">
             블로그 관리를 위해 비밀번호를 입력하세요
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
+            <div className="bg-rose/10 border border-rose/30 text-rose p-3 rounded-md text-sm">
               {error}
             </div>
           )}
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              className="appearance-none relative block w-full px-3 py-2 border border-light/20 placeholder-light/40 text-light bg-light/5 rounded-md focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
               placeholder="비밀번호"
             />
           </div>
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-light bg-teal hover:bg-teal/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? '로그인 중...' : '로그인'}
           </button>

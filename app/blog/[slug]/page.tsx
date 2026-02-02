@@ -36,17 +36,17 @@ export default async function PostPage({ params }: Props) {
       {/* Back Link */}
       <Link
         href="/blog"
-        className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-8"
+        className="inline-flex items-center text-teal hover:text-rose transition-colors mb-8"
       >
         &larr; 블로그로 돌아가기
       </Link>
 
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-light mb-4">
           {post.title}
         </h1>
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-light/50">
           <time>{post.date}</time>
           <span>{post.readingTime}</span>
         </div>
@@ -56,7 +56,7 @@ export default async function PostPage({ params }: Props) {
               <Link
                 key={tag}
                 href={`/blog/tag/${tag}`}
-                className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="px-2 py-1 text-xs bg-rose/20 text-rose rounded hover:bg-rose/30 transition-colors"
               >
                 #{tag}
               </Link>
@@ -66,15 +66,15 @@ export default async function PostPage({ params }: Props) {
       </header>
 
       {/* Content */}
-      <div className="prose prose-gray dark:prose-invert max-w-none">
+      <div className="prose prose-invert prose-teal max-w-none">
         <MDXRemote source={post.content} />
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+      <footer className="mt-12 pt-8 border-t border-light/10">
         <Link
           href="/blog"
-          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline"
+          className="inline-flex items-center text-teal hover:text-rose transition-colors"
         >
           &larr; 다른 글 보기
         </Link>

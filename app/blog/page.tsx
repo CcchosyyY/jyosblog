@@ -22,10 +22,10 @@ export default async function BlogPage() {
   return (
     <div>
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl font-bold text-light mb-4">
           전체 글
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
+        <p className="text-light/70 mb-6">
           총 {posts.length}개의 글이 있습니다.
         </p>
         <SearchBar posts={searchPosts} />
@@ -39,7 +39,7 @@ export default async function BlogPage() {
               <Link
                 key={tag}
                 href={`/blog/tag/${tag}`}
-                className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                className="px-3 py-1 text-sm bg-rose/20 text-rose rounded-full hover:bg-rose/30 transition-colors"
               >
                 #{tag}
               </Link>
@@ -64,7 +64,7 @@ export default async function BlogPage() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-light/50">
             아직 작성된 글이 없습니다.
           </p>
         </div>

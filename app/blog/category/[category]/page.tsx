@@ -47,10 +47,10 @@ export default async function CategoryPage({ params }: Props) {
   return (
     <div>
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl font-bold text-light mb-4">
           {categoryName}
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
+        <p className="text-light/70 mb-6">
           {posts.length}개의 글이 있습니다.
         </p>
         <SearchBar posts={searchPosts} />
@@ -72,7 +72,7 @@ export default async function CategoryPage({ params }: Props) {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-light/50">
             이 카테고리에 작성된 글이 없습니다.
           </p>
         </div>

@@ -12,6 +12,10 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        dark: '#262629',       // 다크 배경
+        light: '#f2f4f4',      // 밝은 텍스트
+        teal: '#0e997c',       // 청록색 accent
+        rose: '#d2698b',       // 핑크 accent
       },
       typography: {
         DEFAULT: {

@@ -16,13 +16,13 @@ export default function PostCard({
   tags = [],
 }: PostCardProps) {
   return (
-    <article className="group p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 hover:shadow-lg">
+    <article className="group p-6 bg-dark rounded-lg border border-light/10 hover:border-teal/50 transition-all duration-200 hover:shadow-lg hover:shadow-teal/5">
       <Link href={`/blog/${slug}`}>
-        <time className="text-sm text-gray-500 dark:text-gray-400">{date}</time>
-        <h3 className="mt-2 text-xl font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <time className="text-sm text-light/50">{date}</time>
+        <h3 className="mt-2 text-xl font-semibold text-light group-hover:text-teal transition-colors">
           {title}
         </h3>
-        <p className="mt-2 text-gray-600 dark:text-gray-300 line-clamp-2">
+        <p className="mt-2 text-light/70 line-clamp-2">
           {description}
         </p>
         {tags.length > 0 && (
@@ -30,7 +30,7 @@ export default function PostCard({
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded"
+                className="px-2 py-1 text-xs bg-rose/20 text-rose rounded"
               >
                 {tag}
               </span>

@@ -36,14 +36,14 @@ export default async function TagPage({ params }: Props) {
       <header className="mb-12">
         <Link
           href="/blog"
-          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-4"
+          className="inline-flex items-center text-teal hover:text-rose transition-colors mb-4"
         >
           &larr; 전체 글 보기
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl font-bold text-light mb-4">
           #{decodedTag}
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
+        <p className="text-light/70">
           {posts.length}개의 글
         </p>
       </header>
@@ -57,8 +57,8 @@ export default async function TagPage({ params }: Props) {
               href={`/blog/tag/${t}`}
               className={`px-3 py-1 text-sm rounded-full transition-colors ${
                 t === decodedTag
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? 'bg-rose text-light'
+                  : 'bg-rose/20 text-rose hover:bg-rose/30'
               }`}
             >
               #{t}

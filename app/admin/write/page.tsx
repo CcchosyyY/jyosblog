@@ -3,17 +3,17 @@ import Link from 'next/link';
 
 export default function WritePage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen bg-dark">
+      <header className="bg-dark border-b border-light/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
             <Link
               href="/admin"
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="text-light/50 hover:text-teal transition-colors"
             >
               &larr; 뒤로
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-light">
               새 글 작성
             </h1>
           </div>
@@ -21,7 +21,7 @@ export default function WritePage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-light/5 border border-light/10 rounded-lg p-6">
           <PostEditor />
         </div>
       </main>
