@@ -8,7 +8,6 @@ import type { Post } from '@/lib/supabase';
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -46,171 +45,146 @@ export default function AdminDashboard() {
     }
   };
 
-  const filteredPosts = posts.filter((post) => {
-    if (filter === 'all') return true;
-    return post.status === filter;
-  });
-
   const publishedCount = posts.filter((p) => p.status === 'published').length;
   const draftCount = posts.filter((p) => p.status === 'draft').length;
+  const categories = new Set(posts.map((p) => p.category)).size;
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark">
-        <p className="text-light/50">로딩 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted">로딩 중...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark">
-      <header className="bg-dark border-b border-light/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-light">
-            블로그 관리
+    <div className="min-h-screen bg-background">
+      <main className="max-w-6xl mx-auto px-4 sm:px-20 py-10">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-[28px] font-bold text-foreground">
+            Dashboard
           </h1>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Link
               href="/admin/write"
-              className="px-4 py-2 bg-teal text-light rounded-md hover:bg-teal/80 transition-colors"
+              className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/80 transition-colors"
             >
               글쓰기
             </Link>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-light/70 hover:text-rose transition-colors"
+              className="px-4 py-2.5 text-subtle text-sm hover:text-primary transition-colors"
             >
               로그아웃
             </button>
           </div>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-light/5 border border-light/10 p-4 rounded-lg">
-            <p className="text-sm text-light/50">전체 글</p>
-            <p className="text-2xl font-bold text-light">{posts.length}</p>
+        <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="bg-card border border-card-border p-5 rounded-xl">
+            <p className="text-xs font-medium text-muted">Total Posts</p>
+            <p className="text-[28px] font-bold text-foreground mt-1">{posts.length}</p>
           </div>
-          <div className="bg-light/5 border border-light/10 p-4 rounded-lg">
-            <p className="text-sm text-light/50">발행됨</p>
-            <p className="text-2xl font-bold text-teal">{publishedCount}</p>
+          <div className="bg-card border border-card-border p-5 rounded-xl">
+            <p className="text-xs font-medium text-muted">Published</p>
+            <p className="text-[28px] font-bold text-foreground mt-1">{publishedCount}</p>
           </div>
-          <div className="bg-light/5 border border-light/10 p-4 rounded-lg">
-            <p className="text-sm text-light/50">임시저장</p>
-            <p className="text-2xl font-bold text-rose">{draftCount}</p>
+          <div className="bg-card border border-card-border p-5 rounded-xl">
+            <p className="text-xs font-medium text-muted">Drafts</p>
+            <p className="text-[28px] font-bold text-foreground mt-1">{draftCount}</p>
+          </div>
+          <div className="bg-card border border-card-border p-5 rounded-xl">
+            <p className="text-xs font-medium text-muted">Categories</p>
+            <p className="text-[28px] font-bold text-foreground mt-1">{categories}</p>
           </div>
         </div>
 
-        {/* Filter */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              filter === 'all'
-                ? 'bg-teal text-light'
-                : 'bg-light/5 text-light/70 hover:bg-light/10'
-            }`}
-          >
-            전체 ({posts.length})
-          </button>
-          <button
-            onClick={() => setFilter('published')}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              filter === 'published'
-                ? 'bg-teal text-light'
-                : 'bg-light/5 text-light/70 hover:bg-light/10'
-            }`}
-          >
-            발행됨 ({publishedCount})
-          </button>
-          <button
-            onClick={() => setFilter('draft')}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              filter === 'draft'
-                ? 'bg-teal text-light'
-                : 'bg-light/5 text-light/70 hover:bg-light/10'
-            }`}
-          >
-            임시저장 ({draftCount})
-          </button>
-        </div>
-
-        {/* Posts List */}
-        <div className="bg-light/5 border border-light/10 rounded-lg overflow-hidden">
-          {filteredPosts.length === 0 ? (
-            <div className="p-8 text-center text-light/50">
-              글이 없습니다.
-            </div>
-          ) : (
-            <table className="min-w-full divide-y divide-light/10">
-              <thead className="bg-light/5">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-light/50 uppercase tracking-wider">
-                    제목
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-light/50 uppercase tracking-wider">
-                    카테고리
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-light/50 uppercase tracking-wider">
-                    상태
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-light/50 uppercase tracking-wider">
-                    수정일
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-light/50 uppercase tracking-wider">
-                    작업
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-light/10">
-                {filteredPosts.map((post) => (
-                  <tr key={post.id} className="hover:bg-light/5">
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-light">
-                        {post.title}
-                      </div>
-                      <div className="text-sm text-light/50">
-                        {post.slug}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-light/70">
-                      {post.category}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          post.status === 'published'
-                            ? 'bg-teal/20 text-teal'
-                            : 'bg-rose/20 text-rose'
-                        }`}
-                      >
-                        {post.status === 'published' ? '발행됨' : '임시저장'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-light/50">
-                      {new Date(post.updated_at).toLocaleDateString('ko-KR')}
-                    </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium space-x-2">
-                      <Link
-                        href={`/admin/edit/${post.id}`}
-                        className="text-teal hover:text-teal/80"
-                      >
-                        수정
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(post.id)}
-                        className="text-rose hover:text-rose/80"
-                      >
-                        삭제
-                      </button>
-                    </td>
+        {/* Recent Posts */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-foreground">Recent Posts</h2>
+          <div className="border border-card-border rounded-xl overflow-hidden">
+            {posts.length === 0 ? (
+              <div className="p-8 text-center text-muted text-sm">
+                글이 없습니다.
+              </div>
+            ) : (
+              <table className="min-w-full">
+                <thead>
+                  <tr className="bg-surface">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted w-[280px]">
+                      Title
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted w-[120px]">
+                      Category
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted w-[120px]">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted w-[120px]">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold text-muted">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {posts.map((post) => (
+                    <tr key={post.id} className="border-t border-card-border hover:bg-surface/50 transition-colors">
+                      <td className="px-4 py-3">
+                        <span className="text-sm font-medium text-foreground">
+                          {post.title}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="px-2.5 py-1 text-xs font-medium bg-secondary/10 text-secondary rounded">
+                          {post.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ${
+                            post.status === 'published'
+                              ? 'bg-primary/10 text-primary'
+                              : 'bg-secondary/10 text-secondary'
+                          }`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            post.status === 'published' ? 'bg-primary' : 'bg-secondary'
+                          }`} />
+                          {post.status === 'published' ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-[13px] text-muted">
+                        {new Date(post.updated_at).toLocaleDateString('ko-KR')}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/admin/edit/${post.id}`}
+                            className="text-subtle hover:text-foreground transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(post.id)}
+                            className="text-primary hover:text-primary/80 transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </main>
     </div>

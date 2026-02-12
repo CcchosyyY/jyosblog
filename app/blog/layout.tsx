@@ -1,5 +1,6 @@
 import { getPostCountByCategory } from '@/lib/posts';
 import CategorySidebar from '@/components/CategorySidebar';
+import QuickMemoWidget from '@/components/QuickMemoWidget';
 
 export default async function BlogLayout({
   children,
@@ -9,10 +10,13 @@ export default async function BlogLayout({
   const postCounts = await getPostCountByCategory();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex flex-col md:flex-row gap-8">
-        <CategorySidebar postCounts={postCounts} />
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20 py-10">
+      <div className="flex gap-10">
         <div className="flex-1 min-w-0">{children}</div>
+        <div className="hidden lg:flex flex-col gap-6 w-[280px] shrink-0">
+          <CategorySidebar postCounts={postCounts} />
+          <QuickMemoWidget />
+        </div>
       </div>
     </div>
   );

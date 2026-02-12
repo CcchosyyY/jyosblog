@@ -53,17 +53,18 @@ export default function SearchBar({ posts }: SearchBarProps) {
       <div className="relative">
         <input
           type="text"
-          placeholder="검색..."
+          placeholder="Search posts..."
+          aria-label="블로그 글 검색"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          className="w-full px-4 py-2 pl-10 bg-light/5 border border-light/10 rounded-lg text-light placeholder-light/40 focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+          className="w-full px-4 py-2.5 pl-10 bg-surface border border-card-border rounded-lg text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
         />
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-light/40"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -78,7 +79,7 @@ export default function SearchBar({ posts }: SearchBarProps) {
       </div>
 
       {isOpen && query && results.length > 0 && (
-        <div className="absolute z-50 w-full mt-2 bg-dark border border-light/10 rounded-lg shadow-lg max-h-96 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-card border border-card-border rounded-lg shadow-lg max-h-96 overflow-y-auto">
           {results.map((post) => (
             <Link
               key={post.slug}
@@ -87,12 +88,12 @@ export default function SearchBar({ posts }: SearchBarProps) {
                 setIsOpen(false);
                 setQuery('');
               }}
-              className="block px-4 py-3 hover:bg-teal/10 border-b border-light/5 last:border-0 transition-colors"
+              className="block px-4 py-2.5 hover:bg-primary/10 border-b border-card-border last:border-0 transition-colors"
             >
-              <h4 className="font-medium text-light">
+              <h4 className="text-sm font-medium text-foreground">
                 {post.title}
               </h4>
-              <p className="text-sm text-light/50 line-clamp-1">
+              <p className="text-xs text-muted line-clamp-1">
                 {post.description}
               </p>
             </Link>
@@ -101,7 +102,7 @@ export default function SearchBar({ posts }: SearchBarProps) {
       )}
 
       {isOpen && query && results.length === 0 && (
-        <div className="absolute z-50 w-full mt-2 bg-dark border border-light/10 rounded-lg shadow-lg p-4 text-center text-light/50">
+        <div className="absolute z-50 w-full mt-2 bg-card border border-card-border rounded-lg shadow-lg p-4 text-center text-muted text-sm">
           검색 결과가 없습니다.
         </div>
       )}

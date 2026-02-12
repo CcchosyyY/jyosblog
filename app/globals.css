@@ -3,19 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --background: 255 255 255;
-  --foreground: 26 26 28;
-  --color-dark: 255 255 255;
-  --color-light: 26 26 28;
-  --teal: #0e997c;
-  --rose: #d2698b;
+  --background: 254 254 255;
+  --foreground: 0 15 8;
+  --card: 254 254 255;
+  --card-border: #000F081A;
+  --primary: #B3001B;
+  --secondary: #FAA916;
+  --link: #135E90;
+  --muted: #000F0880;
+  --subtle: #000F08B3;
+  --surface: #F5F5F3;
 }
 
 .dark {
-  --background: 38 38 41;
-  --foreground: 242 244 244;
-  --color-dark: 38 38 41;
-  --color-light: 242 244 244;
+  --background: 18 18 18;
+  --foreground: 255 255 255;
+  --card: 30 30 30;
+  --card-border: #FFFFFF1A;
+  --primary: #B3001B;
+  --secondary: #FAA916;
+  --link: #5BA4D9;
+  --muted: #FFFFFF80;
+  --subtle: #FFFFFFB3;
+  --surface: #2D2D2D;
 }
 
 body {
@@ -38,11 +48,11 @@ body {
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #3a3a3d;
+  background: #3a3b40;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0e997c;
+  background: var(--primary);
 }
 
 /* Prose styles for blog content */
@@ -51,39 +61,39 @@ body {
 }
 
 .prose a {
-  color: #0e997c;
+  color: var(--link);
   text-decoration: underline;
 }
 
 .prose a:hover {
-  color: #d2698b;
+  color: var(--primary);
 }
 
 /* Code block styles */
 .prose pre {
-  background-color: #f3f4f6;
+  background-color: var(--surface);
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
 }
 
 .dark .prose pre {
-  background-color: #1f2937;
+  background-color: #2D2D2D;
 }
 
 .prose code {
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 0.875rem;
 }
 
 .prose :not(pre) > code {
-  background-color: #f3f4f6;
+  background-color: var(--surface);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
 }
 
 .dark .prose :not(pre) > code {
-  background-color: #374151;
+  background-color: #2D2D2D;
 }
 
 /* Animations */

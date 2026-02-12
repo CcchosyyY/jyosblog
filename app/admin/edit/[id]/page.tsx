@@ -37,17 +37,17 @@ export default function EditPage({ params }: Props) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark">
-        <p className="text-light/50">로딩 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted">로딩 중...</p>
       </div>
     );
   }
 
   if (error || !post) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-dark">
-        <p className="text-rose mb-4">{error || '글을 찾을 수 없습니다.'}</p>
-        <Link href="/admin" className="text-teal hover:text-teal/80 transition-colors">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
+        <p className="text-primary mb-4">{error || '글을 찾을 수 없습니다.'}</p>
+        <Link href="/admin" className="text-link hover:text-primary transition-colors text-sm font-medium">
           관리자 페이지로 돌아가기
         </Link>
       </div>
@@ -55,17 +55,17 @@ export default function EditPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
-      <header className="bg-dark border-b border-light/10">
+    <div className="min-h-screen bg-background">
+      <header className="bg-background border-b border-card-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
             <Link
               href="/admin"
-              className="text-light/50 hover:text-teal transition-colors"
+              className="text-subtle hover:text-foreground transition-colors text-sm font-medium"
             >
               &larr; 뒤로
             </Link>
-            <h1 className="text-2xl font-bold text-light">
+            <h1 className="text-2xl font-bold text-foreground">
               글 수정
             </h1>
           </div>
@@ -73,7 +73,7 @@ export default function EditPage({ params }: Props) {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-light/5 border border-light/10 rounded-lg p-6">
+        <div className="bg-card border border-card-border rounded-xl p-6">
           <PostEditor post={post} />
         </div>
       </main>

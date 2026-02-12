@@ -15,10 +15,21 @@
 - [x] AI 카테고리 자동 추천
 
 ### UI/UX
-- [x] 다크모드 (순수 검정 배경)
+- [x] 다크모드 (`#121212` 배경)
 - [x] 검색 기능
 - [x] 목차(TOC) 자동 생성
 - [x] 코드 하이라이팅
+
+### Pencil 디자인 시스템 리디자인 (2025-02)
+- [x] 컬러 시스템 전환: teal/rose → Primary `#B3001B` (crimson) / Secondary `#FAA916` (gold)
+- [x] 폰트 변경: Geist → Inter + JetBrains Mono
+- [x] CSS 변수 기반 디자인 토큰 (background, foreground, card, primary, secondary, link, muted, subtle, surface, card-border)
+- [x] 전체 22개 파일 토큰 변환 완료
+- [x] Header NavLink Active 상태 (pathname 기반)
+- [x] Header Memo 링크 추가
+- [x] Header SearchBtn 아이콘 추가
+- [x] Footer RSS 피드 아이콘 추가
+- [x] Pencil 아토믹 디자인: Atoms → Molecules → Organisms → Page 레이아웃 시안 완성
 
 ### 관리 기능
 - [x] Admin UI (글 작성/수정/삭제)
@@ -41,6 +52,9 @@
 
 ## 커밋 히스토리
 ```
+xxxxxxx Redesign blog with Pencil atomic design system
+dfa45e2 Fix security vulnerabilities, redesign color system, and upgrade to Next.js 15
+dbc47fe Add project documentation (docs folder)
 d0c5f0a Clean up: remove unused files and update README
 494fe7e Add Quick Memo feature with Supabase integration
 6c5f132 Add Supabase blog system with Admin UI

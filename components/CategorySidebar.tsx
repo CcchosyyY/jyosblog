@@ -21,23 +21,23 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
   };
 
   return (
-    <aside className="w-full md:w-48 shrink-0">
+    <aside className="w-full md:w-60 shrink-0">
       <nav className="sticky top-24">
-        <h3 className="text-sm font-semibold text-light/50 uppercase tracking-wider mb-4">
-          카테고리
+        <h3 className="text-base font-semibold text-foreground mb-4">
+          Categories
         </h3>
         <ul className="space-y-1">
           <li>
             <Link
               href="/blog"
-              className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+              className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-colors ${
                 isAllActive()
-                  ? 'bg-teal/20 text-teal font-medium'
-                  : 'text-light/70 hover:bg-light/5 hover:text-light'
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-subtle hover:bg-surface hover:text-foreground'
               }`}
             >
               <span>전체</span>
-              <span className="text-sm text-light/50">
+              <span className="text-xs text-muted">
                 {Object.values(postCounts).reduce((a, b) => a + b, 0)}
               </span>
             </Link>
@@ -46,14 +46,14 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
             <li key={category.id}>
               <Link
                 href={`/blog/category/${category.id}`}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors ${
+                className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-colors ${
                   isActive(category.id)
-                    ? 'bg-teal/20 text-teal font-medium'
-                    : 'text-light/70 hover:bg-light/5 hover:text-light'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-subtle hover:bg-surface hover:text-foreground'
                 }`}
               >
                 <span>{category.name}</span>
-                <span className="text-sm text-light/50">
+                <span className="text-xs text-muted">
                   {postCounts[category.id] || 0}
                 </span>
               </Link>
@@ -62,7 +62,7 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
         </ul>
 
         {/* Quick Memo Widget */}
-        <div className="mt-8 pt-6 border-t border-light/10">
+        <div className="mt-6 pt-6 border-t border-card-border">
           <QuickMemoWidget />
         </div>
       </nav>

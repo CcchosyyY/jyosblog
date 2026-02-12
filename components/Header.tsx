@@ -2,10 +2,18 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
+
+const NAV_LINKS = [
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+  { href: '/memos', label: 'Memo' },
+];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -17,51 +25,64 @@ export default function Header() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isMenuOpen]);
 
+  const isActive = (href: string) => {
+    if (href === '/blog') return pathname === '/blog' || pathname.startsWith('/blog/');
+    return pathname === href;
+  };
+
   return (
-    <header className="sticky top-0 z-50 bg-dark/95 backdrop-blur-md border-b border-light/10">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-card-border">
+      <nav className="max-w-6xl mx-auto px-6">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
           <Link
             href="/"
-            className="text-xl font-bold text-teal hover:text-rose transition-colors"
+            className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
           >
-            MyBlog
+            Jyo&apos;s Blog
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
-              className="text-light/80 hover:text-teal transition-colors"
-            >
-              Home
-            </Link>
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  isActive(link.href)
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-subtle hover:bg-primary/10 hover:text-primary'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="hidden md:flex items-center gap-1">
+            <ThemeToggle />
             <Link
               href="/blog"
-              className="text-light/80 hover:text-teal transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
+              aria-label="Search"
             >
-              Blog
+              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </Link>
-            <Link
-              href="/about"
-              className="text-light/80 hover:text-teal transition-colors"
-            >
-              About
-            </Link>
-            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center space-x-2 md:hidden">
+          <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
             <button
-              className="p-2"
+              className="p-2 rounded-lg hover:bg-surface transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
               <svg
-                className="w-6 h-6 text-light/80"
+                className="w-5 h-5 text-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -88,29 +109,22 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-light/10">
-            <div className="flex flex-col space-y-4">
-              <Link
-                href="/"
-                className="text-light/80 hover:text-teal transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/blog"
-                className="text-light/80 hover:text-teal transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <Link
-                href="/about"
-                className="text-light/80 hover:text-teal transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
+          <div className="md:hidden py-4 border-t border-card-border">
+            <div className="flex flex-col gap-1">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    isActive(link.href)
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-subtle hover:bg-primary/10 hover:text-primary'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         )}

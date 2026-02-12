@@ -7,23 +7,23 @@ export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <header className="mb-12">
-        <h1 className="text-3xl font-bold text-light mb-4">
+        <h1 className="text-3xl font-bold text-foreground mb-4">
           About
         </h1>
       </header>
 
-      <div className="prose prose-invert prose-teal max-w-none">
+      <div className="prose prose-neutral dark:prose-invert max-w-none">
         {/* Profile */}
         <div className="flex flex-col sm:flex-row items-center gap-6 mb-12 not-prose">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-teal to-rose flex items-center justify-center text-light text-4xl font-bold">
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-4xl font-bold">
             M
           </div>
           <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-bold text-light">
-              Blog Owner
+            <h2 className="text-2xl font-bold text-foreground">
+              Blog Author
             </h2>
-            <p className="text-light/70 mt-2">
-              개발과 일상을 기록하는 블로거
+            <p className="text-subtle mt-2">
+              Frontend Developer &amp; Writer
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function AboutPage() {
         <h2>기술 스택</h2>
         <p>이 블로그는 다음 기술로 만들어졌습니다:</p>
         <ul>
-          <li><strong>Next.js 14</strong> - React 기반 프레임워크</li>
+          <li><strong>Next.js 15</strong> - React 기반 프레임워크</li>
           <li><strong>TypeScript</strong> - 타입 안정성</li>
           <li><strong>Tailwind CSS</strong> - 스타일링</li>
           <li><strong>MDX</strong> - 콘텐츠 작성</li>
