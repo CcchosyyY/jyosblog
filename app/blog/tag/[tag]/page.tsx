@@ -58,7 +58,7 @@ export default async function TagPage({ params }: Props) {
             <Link
               key={t}
               href={`/blog/tag/${t}`}
-              className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${
+              className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
                 t === decodedTag
                   ? 'bg-secondary text-white'
                   : 'bg-secondary/10 text-secondary hover:bg-secondary/20'

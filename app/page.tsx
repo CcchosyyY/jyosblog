@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import PostCard from '@/components/PostCard';
 import CategorySidebar from '@/components/CategorySidebar';
-
 import { getAllPosts, getPostCountByCategory } from '@/lib/posts';
 
 export default async function Home() {
