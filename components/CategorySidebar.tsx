@@ -32,7 +32,7 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
               href="/blog"
               className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-colors ${
                 isAllActive()
-                  ? 'bg-primary/10 text-primary font-medium'
+                  ? 'bg-primary/10 dark:bg-primary/20 text-primary font-medium'
                   : 'text-subtle hover:bg-surface hover:text-foreground'
               }`}
             >
@@ -48,7 +48,7 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
                 href={`/blog/category/${category.id}`}
                 className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm transition-colors ${
                   isActive(category.id)
-                    ? 'bg-primary/10 text-primary font-medium'
+                    ? 'bg-primary/10 dark:bg-primary/20 text-primary font-medium'
                     : 'text-subtle hover:bg-surface hover:text-foreground'
                 }`}
               >

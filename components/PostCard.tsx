@@ -22,7 +22,7 @@ export default function PostCard({
         <h3 className="mt-3 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
           {title}
         </h3>
-        <p className="mt-3 text-sm text-subtle leading-relaxed line-clamp-2">
+        <p className="mt-3 text-sm text-subtle leading-snug line-clamp-2">
           {description}
         </p>
         {tags.length > 0 && (
@@ -30,7 +30,7 @@ export default function PostCard({
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2.5 py-1 text-xs font-medium bg-secondary/10 text-secondary rounded"
+                className="px-2.5 py-1 text-xs font-medium bg-secondary/20 text-secondary rounded-sm"
               >
                 {tag}
               </span>

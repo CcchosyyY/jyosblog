@@ -31,7 +31,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-card-border">
+    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-card-border">
       <nav className="max-w-6xl mx-auto px-6">
         <div className="flex justify-between items-center h-14">
           {/* Logo */}
@@ -50,8 +50,8 @@ export default function Header() {
                 href={link.href}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive(link.href)
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-subtle hover:bg-primary/10 hover:text-primary'
+                    ? 'bg-primary/10 dark:bg-primary/20 text-primary'
+                    : 'text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary'
                 }`}
               >
                 {link.label}
@@ -117,8 +117,8 @@ export default function Header() {
                   href={link.href}
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     isActive(link.href)
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-subtle hover:bg-primary/10 hover:text-primary'
+                      ? 'bg-primary/10 dark:bg-primary/20 text-primary'
+                      : 'text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >

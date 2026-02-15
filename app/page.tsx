@@ -12,13 +12,13 @@ export default async function Home() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20 py-10">
       <div className="flex gap-10">
         {/* Main Content */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col gap-10">
           {/* Hero Section */}
-          <section className="py-10">
-            <h1 className="text-4xl font-bold text-foreground mb-5">
+          <section className="flex flex-col gap-5">
+            <h1 className="text-4xl font-bold text-foreground">
               Welcome to Jyo&apos;s Blog
             </h1>
-            <p className="text-base text-subtle leading-relaxed mb-5">
+            <p className="text-base text-subtle leading-relaxed">
               Exploring development, design, and life through writing.
             </p>
             <div className="flex gap-3">
@@ -38,7 +38,7 @@ export default async function Home() {
           </section>
 
           {/* Recent Posts */}
-          <section className="py-8">
+          <section>
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-[22px] font-bold text-foreground">
                 Recent Posts
