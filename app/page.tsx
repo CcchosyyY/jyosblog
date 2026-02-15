@@ -30,7 +30,7 @@ export default async function Home() {
               </Link>
               <Link
                 href="/about"
-                className="px-6 py-3 border border-secondary text-secondary text-sm font-medium rounded-lg hover:bg-secondary/10 transition-colors"
+                className="px-6 py-3 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
               >
                 About Me
               </Link>
@@ -78,7 +78,7 @@ export default async function Home() {
           {/* Profile Card */}
           <div className="p-5 bg-card border border-card-border rounded-xl">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-base font-semibold shrink-0">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-base font-semibold shrink-0 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
                 M
               </div>
               <div>

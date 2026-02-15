@@ -21,7 +21,7 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
   };
 
   return (
-    <aside className="w-full md:w-60 shrink-0">
+    <aside className="w-full shrink-0">
       <nav className="sticky top-24">
         <h3 className="text-base font-semibold text-foreground mb-4">
           Categories

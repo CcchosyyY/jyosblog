@@ -27,7 +27,7 @@ export default function ThemeToggle() {
     >
       {theme === 'dark' ? (
         <svg
-          className="w-5 h-5 text-secondary"
+          className="w-5 h-5 text-subtle"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
