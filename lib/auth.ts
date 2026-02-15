@@ -8,11 +8,18 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 export async function createSession(): Promise<string> {
   const token = crypto.randomUUID();
   const supabase = getSupabase();
-  const expiresAt = new Date(Date.now() + SESSION_MAX_AGE * 1000).toISOString();
+  const expiresAt = new Date(
+    Date.now() + SESSION_MAX_AGE * 1000
+  ).toISOString();
 
-  await supabase
+  const { error } = await supabase
     .from('admin_sessions')
     .insert({ token, expires_at: expiresAt });
+
+  if (error) {
+    console.error('Error creating session:', error);
+    throw new Error('Failed to create session');
+  }
 
   return token;
 }

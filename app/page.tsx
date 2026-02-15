@@ -79,14 +79,14 @@ export default async function Home() {
           <div className="p-5 bg-card border border-card-border rounded-xl">
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-base font-semibold shrink-0 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                M
+                J
               </div>
               <div>
                 <h3 className="text-[15px] font-semibold text-foreground">
-                  Blog Author
+                  Jyo
                 </h3>
                 <p className="text-[13px] text-subtle">
-                  Frontend Developer &amp; Writer
+                  Developer &amp; Blogger
                 </p>
               </div>
             </div>

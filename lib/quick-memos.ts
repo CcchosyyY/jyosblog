@@ -7,52 +7,71 @@ export interface QuickMemo {
   is_processed: boolean;
 }
 
-export async function getQuickMemos(limit: number = 10): Promise<QuickMemo[]> {
-  const supabase = getSupabase();
+export async function getQuickMemos(
+  limit: number = 10
+): Promise<QuickMemo[]> {
+  try {
+    const supabase = getSupabase();
 
-  const { data, error } = await supabase
-    .from('quick_memos')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(limit);
+    const { data, error } = await supabase
+      .from('quick_memos')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
 
-  if (error) {
-    console.error('Error fetching quick memos:', error);
+    if (error) {
+      console.error('Error fetching quick memos:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (e) {
+    console.error('Supabase not configured:', e);
     return [];
   }
-
-  return data || [];
 }
 
-export async function createQuickMemo(content: string): Promise<QuickMemo | null> {
-  const supabase = getSupabase();
+export async function createQuickMemo(
+  content: string
+): Promise<QuickMemo | null> {
+  try {
+    const supabase = getSupabase();
 
-  const { data, error } = await supabase
-    .from('quick_memos')
-    .insert({ content })
-    .select()
-    .single();
+    const { data, error } = await supabase
+      .from('quick_memos')
+      .insert({ content })
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Error creating quick memo:', error);
+    if (error) {
+      console.error('Error creating quick memo:', error);
+      return null;
+    }
+
+    return data;
+  } catch (e) {
+    console.error('Supabase not configured:', e);
     return null;
   }
-
-  return data;
 }
 
 export async function deleteQuickMemo(id: string): Promise<boolean> {
-  const supabase = getSupabase();
+  try {
+    const supabase = getSupabase();
 
-  const { error } = await supabase
-    .from('quick_memos')
-    .delete()
-    .eq('id', id);
+    const { error } = await supabase
+      .from('quick_memos')
+      .delete()
+      .eq('id', id);
 
-  if (error) {
-    console.error('Error deleting quick memo:', error);
+    if (error) {
+      console.error('Error deleting quick memo:', error);
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.error('Supabase not configured:', e);
     return false;
   }
-
-  return true;
 }

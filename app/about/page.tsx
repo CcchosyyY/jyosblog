@@ -16,14 +16,14 @@ export default function AboutPage() {
         {/* Profile */}
         <div className="flex flex-col sm:flex-row items-center gap-6 mb-12 not-prose">
           <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-4xl font-bold">
-            M
+            J
           </div>
           <div className="text-center sm:text-left">
             <h2 className="text-2xl font-bold text-foreground">
-              Blog Author
+              Jyo
             </h2>
             <p className="text-subtle mt-2">
-              Frontend Developer &amp; Writer
+              Developer &amp; Blogger
             </p>
           </div>
         </div>
@@ -60,16 +60,12 @@ export default function AboutPage() {
           <li>
             GitHub:{' '}
             <a
-              href="https://github.com"
+              href="https://github.com/CcchosyyY"
               target="_blank"
               rel="noopener noreferrer"
             >
-              github.com
+              github.com/CcchosyyY
             </a>
-          </li>
-          <li>
-            Email:{' '}
-            <a href="mailto:contact@example.com">contact@example.com</a>
           </li>
         </ul>
       </div>

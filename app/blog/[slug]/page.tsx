@@ -2,6 +2,7 @@ import { getPostBySlug, getAllPosts } from '@/lib/posts';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import TableOfContents from '@/components/TableOfContents';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -33,6 +34,8 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <TableOfContents />
+
       {/* Back Link */}
       <Link
         href="/blog"

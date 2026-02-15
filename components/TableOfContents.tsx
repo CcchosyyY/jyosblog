@@ -58,7 +58,7 @@ export default function TableOfContents() {
 
   return (
     <nav className="hidden xl:block fixed right-8 top-32 w-64 max-h-[calc(100vh-200px)] overflow-y-auto">
-      <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
+      <h4 className="font-semibold text-foreground mb-4">
         목차
       </h4>
       <ul className="space-y-2 text-sm">
@@ -71,8 +71,8 @@ export default function TableOfContents() {
               href={`#${heading.id}`}
               className={`block py-1 transition-colors ${
                 activeId === heading.id
-                  ? 'text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'text-primary font-medium'
+                  : 'text-muted hover:text-foreground'
               }`}
             >
               {heading.text}
