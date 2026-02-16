@@ -10,11 +10,10 @@ interface QuickMemo {
 }
 
 export default function QuickMemoWidget() {
-  const [isOpen, setIsOpen] = useState(false);
   const [memos, setMemos] = useState<QuickMemo[]>([]);
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchMemos = useCallback(async () => {
     try {
@@ -32,12 +31,6 @@ export default function QuickMemoWidget() {
     fetchMemos();
   }, [fetchMemos]);
 
-  useEffect(() => {
-    if (isOpen && textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [isOpen]);
-
   const handleSave = async () => {
     if (!content.trim() || saving) return;
 
@@ -53,7 +46,6 @@ export default function QuickMemoWidget() {
         const newMemo = await res.json();
         setMemos((prev) => [newMemo, ...prev]);
         setContent('');
-        setIsOpen(false);
       }
     } catch (error) {
       console.error('Failed to save memo:', error);
@@ -76,11 +68,8 @@ export default function QuickMemoWidget() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false);
-      setContent('');
-    } else if (e.key === 'Enter' && e.ctrlKey) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleSave();
     }
@@ -89,72 +78,42 @@ export default function QuickMemoWidget() {
   return (
     <div className="w-full">
       <h3 className="text-base font-semibold text-foreground mb-3">Quick Memo</h3>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/80 transition-colors text-sm font-medium"
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+
+      {/* Memo Input */}
+      <div className="flex items-center gap-2 px-3.5 py-2.5 bg-surface rounded-lg">
+        <input
+          ref={inputRef}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="메모를 입력하세요..."
+          className="flex-1 bg-transparent text-[13px] text-foreground placeholder-muted focus:outline-none"
+        />
+        <button
+          onClick={handleSave}
+          disabled={!content.trim() || saving}
+          className="text-muted hover:text-primary transition-colors disabled:opacity-30 shrink-0"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M12 4v16m8-8H4'}
-          />
-        </svg>
-        {isOpen ? '닫기' : '메모 추가'}
-      </button>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
 
-      {isOpen && (
-        <div className="mt-3 animate-fadeIn">
-          <div className="bg-surface rounded-lg p-3">
-            <textarea
-              ref={textareaRef}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="메모를 입력하세요..."
-              className="w-full h-20 resize-none border-0 focus:outline-none bg-transparent text-foreground text-sm"
-            />
-            <div className="flex justify-end gap-2 mt-2">
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setContent('');
-                }}
-                className="px-3 py-1.5 text-sm text-muted hover:text-foreground transition-colors"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!content.trim() || saving}
-                className="px-3 py-1.5 text-sm bg-primary text-white rounded hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? '저장 중...' : '저장'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Memo List */}
       {memos.length > 0 && (
-        <div className="mt-3 space-y-1.5">
+        <div className="mt-2 space-y-1.5">
           {memos.map((memo) => (
             <div
               key={memo.id}
-              className="group flex items-center justify-between px-3.5 py-2.5 bg-surface rounded-lg transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 bg-surface rounded-lg"
             >
               <span className="flex-1 text-[13px] text-subtle break-words">
                 {memo.content}
               </span>
               <button
                 onClick={() => handleDelete(memo.id)}
-                className="opacity-0 group-hover:opacity-100 focus:opacity-100 ml-2 p-1 text-muted hover:text-primary transition-all shrink-0"
+                className="ml-2 text-muted hover:text-primary transition-colors shrink-0"
                 title="삭제"
               >
                 <svg
@@ -162,11 +121,11 @@ export default function QuickMemoWidget() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  strokeWidth={2}
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>

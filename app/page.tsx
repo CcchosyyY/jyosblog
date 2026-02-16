@@ -9,12 +9,35 @@ export default async function Home() {
   const recentPosts = allPosts.slice(0, 5);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-20 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-10">
       <div className="flex gap-10">
+        {/* Side Column */}
+        <div className="hidden lg:flex flex-col gap-6 w-[240px] shrink-0">
+          {/* Profile Card */}
+          <div className="p-5 bg-card border border-card-border rounded-xl">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-base font-semibold shrink-0 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+                J
+              </div>
+              <div>
+                <h3 className="text-[15px] font-semibold text-foreground">
+                  Jyo
+                </h3>
+                <p className="text-[13px] text-subtle">
+                  Developer &amp; Blogger
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <CategorySidebar postCounts={postCounts} />
+        </div>
+
         {/* Main Content */}
-        <div className="flex-1 min-w-0 flex flex-col gap-10">
+        <div className="flex-1 min-w-0 flex flex-col items-center gap-10">
           {/* Hero Section */}
-          <section className="flex flex-col gap-5">
+          <section className="flex flex-col items-center gap-5">
             <h1 className="text-4xl font-bold text-foreground">
               Welcome to Jyo&apos;s Blog
             </h1>
@@ -38,7 +61,7 @@ export default async function Home() {
           </section>
 
           {/* Recent Posts */}
-          <section>
+          <section className="w-full">
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-[22px] font-bold text-foreground">
                 Recent Posts
@@ -51,7 +74,7 @@ export default async function Home() {
               </Link>
             </div>
             {recentPosts.length > 0 ? (
-              <div className="grid gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {recentPosts.map((post) => (
                   <PostCard
                     key={post.slug}
@@ -71,29 +94,6 @@ export default async function Home() {
               </div>
             )}
           </section>
-        </div>
-
-        {/* Side Column */}
-        <div className="hidden lg:flex flex-col gap-6 w-[280px] shrink-0">
-          {/* Profile Card */}
-          <div className="p-5 bg-card border border-card-border rounded-xl">
-            <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-base font-semibold shrink-0 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                J
-              </div>
-              <div>
-                <h3 className="text-[15px] font-semibold text-foreground">
-                  Jyo
-                </h3>
-                <p className="text-[13px] text-subtle">
-                  Developer &amp; Blogger
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <CategorySidebar postCounts={postCounts} />
         </div>
       </div>
     </div>

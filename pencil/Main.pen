@@ -1177,6 +1177,138 @@
               "fill": "#000F08B3"
             }
           ]
+        },
+        {
+          "type": "frame",
+          "id": "5OXLY",
+          "name": "MemoCard",
+          "reusable": true,
+          "width": 400,
+          "fill": "#FEFEFF",
+          "cornerRadius": 12,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#000F081A"
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "XKf6V",
+              "name": "Content",
+              "fill": "#000F08",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Quick memo text content goes here. This is a sample memo note.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "utNJG",
+              "name": "Bottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "7U3Mx",
+                  "name": "Timestamp",
+                  "fill": "#000F0880",
+                  "content": "2025. 1. 15. 오후 3:42",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "zhjiA",
+                  "name": "DeleteIcon",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "x",
+                  "iconFontFamily": "lucide",
+                  "fill": "#000F0880"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "njx8b",
+          "name": "MemoComposer",
+          "reusable": true,
+          "width": 400,
+          "fill": "#FEFEFF",
+          "cornerRadius": 12,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#000F081A"
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 20,
+          "children": [
+            {
+              "id": "YlUBi",
+              "type": "ref",
+              "ref": "Dppmp",
+              "name": "TextareaField",
+              "width": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "6K7Xq",
+              "name": "Actions",
+              "width": "fill_container",
+              "stroke": {
+                "align": "inside",
+                "thickness": {
+                  "top": 1
+                },
+                "fill": "#000F081A"
+              },
+              "gap": 8,
+              "padding": [
+                12,
+                0,
+                0,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "LlvyP",
+                  "type": "ref",
+                  "ref": "8r7Ba",
+                  "name": "CancelBtn",
+                  "descendants": {
+                    "uIibz": {
+                      "content": "Cancel"
+                    }
+                  }
+                },
+                {
+                  "id": "PMqPF",
+                  "type": "ref",
+                  "ref": "4W5Iv",
+                  "name": "SaveBtn",
+                  "descendants": {
+                    "rkiSH": {
+                      "content": "Save"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -2300,6 +2432,66 @@
           "ref": "rGvja",
           "descendants": {
             "A57mT": {
+              "fill": "#FFFFFFB3"
+            }
+          }
+        },
+        {
+          "id": "yAQ5F",
+          "type": "ref",
+          "ref": "5OXLY",
+          "name": "dkMemoCard",
+          "fill": "#1E1E1E",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#FFFFFF1A"
+          },
+          "descendants": {
+            "XKf6V": {
+              "fill": "#FFFFFFB3"
+            },
+            "7U3Mx": {
+              "fill": "#FFFFFF80"
+            },
+            "zhjiA": {
+              "fill": "#FFFFFF80"
+            }
+          }
+        },
+        {
+          "id": "akDID",
+          "type": "ref",
+          "ref": "njx8b",
+          "name": "dkMemoComposer",
+          "fill": "#1E1E1E",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#FFFFFF1A"
+          },
+          "descendants": {
+            "YlUBi": {
+              "fill": "#2D2D2D",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#FFFFFF1A"
+              }
+            },
+            "YlUBi/nVUHL": {
+              "fill": "#FFFFFF80"
+            },
+            "6K7Xq": {
+              "stroke": {
+                "align": "inside",
+                "thickness": {
+                  "top": 1
+                },
+                "fill": "#FFFFFF1A"
+              }
+            },
+            "LlvyP/uIibz": {
               "fill": "#FFFFFFB3"
             }
           }
@@ -4603,6 +4795,467 @@
             "fill": "#FFFFFF1A"
           },
           "name": "addFooter",
+          "descendants": {
+            "DOd3u": {
+              "fill": "#FFFFFF80"
+            },
+            "7WPMj": {
+              "fill": "#FFFFFF80"
+            },
+            "cHTlj": {
+              "fill": "#FFFFFF80"
+            },
+            "HegZh": {
+              "fill": "#FFFFFF80"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "5Flo3",
+      "x": 0,
+      "y": 8700,
+      "name": "Page: Memos - Light",
+      "width": 1440,
+      "fill": "#FEFEFF",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "c0ngP",
+          "type": "ref",
+          "ref": "41fPm",
+          "name": "memHeader",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "fRtQ7",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            40,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "dUjZf",
+              "name": "Content",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WEpkz",
+                  "name": "PageHeader",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UAtVi",
+                      "name": "Title",
+                      "fill": "#000F08",
+                      "content": "Memos",
+                      "fontFamily": "Inter",
+                      "fontSize": 32,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "emg2N",
+                      "name": "Subtitle",
+                      "fill": "#000F08B3",
+                      "content": "Quick notes and thoughts.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "32Pe7",
+                  "name": "NewMemoBtn",
+                  "fill": "#B3001B",
+                  "cornerRadius": 8,
+                  "gap": 8,
+                  "padding": [
+                    12,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "MKzhu",
+                      "name": "PlusIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FEFEFF"
+                    },
+                    {
+                      "type": "text",
+                      "id": "5MZsK",
+                      "name": "Label",
+                      "fill": "#FEFEFF",
+                      "content": "New Memo",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "id": "JN987",
+                  "type": "ref",
+                  "ref": "njx8b",
+                  "name": "Composer",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "U5CXK",
+                  "name": "MemoList",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "UrqgH",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo1",
+                      "width": "fill_container",
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "Next.js 15에서 Server Actions 사용법 정리하기"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 15. 오후 8:30"
+                        }
+                      }
+                    },
+                    {
+                      "id": "GIK9s",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo2",
+                      "width": "fill_container",
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "Tailwind CSS v4 마이그레이션 가이드 읽어볼 것"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 14. 오전 10:15"
+                        }
+                      }
+                    },
+                    {
+                      "id": "doMZE",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo3",
+                      "width": "fill_container",
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "블로그에 댓글 기능 추가 고려 - Giscus vs Utterances 비교"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 13. 오후 5:20"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "5NrC4",
+          "type": "ref",
+          "ref": "ivTyo",
+          "name": "memFooter",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "sYWsb",
+      "x": 1600,
+      "y": 8700,
+      "name": "Page: Memos - Dark",
+      "width": 1440,
+      "fill": "#121212",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "S7YNZ",
+          "type": "ref",
+          "ref": "41fPm",
+          "name": "dkMemHeader",
+          "width": "fill_container",
+          "fill": "#1E1E1E",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "#FFFFFF1A"
+          },
+          "descendants": {
+            "n9OwV": {
+              "fill": "#B3001B33"
+            },
+            "6O9dK/FVd5h": {
+              "fill": "#FFFFFFB3"
+            },
+            "wWq9r/FVd5h": {
+              "fill": "#FFFFFFB3"
+            },
+            "Baame/A57mT": {
+              "fill": "#FFFFFFB3"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "5Qbg6",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            40,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "dwGF2",
+              "name": "Content",
+              "width": 760,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Aktpy",
+                  "name": "PageHeader",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "M1Juq",
+                      "name": "Title",
+                      "fill": "#FFFFFF",
+                      "content": "Memos",
+                      "fontFamily": "Inter",
+                      "fontSize": 32,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "48Ild",
+                      "name": "Subtitle",
+                      "fill": "#FFFFFFB3",
+                      "content": "Quick notes and thoughts.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u0Jqb",
+                  "name": "NewMemoBtn",
+                  "fill": "#B3001B",
+                  "cornerRadius": 8,
+                  "gap": 8,
+                  "padding": [
+                    12,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "cLu2b",
+                      "name": "PlusIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "lucide",
+                      "fill": "#FEFEFF"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pE9JK",
+                      "name": "Label",
+                      "fill": "#FEFEFF",
+                      "content": "New Memo",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "id": "CQU06",
+                  "type": "ref",
+                  "ref": "njx8b",
+                  "name": "Composer",
+                  "width": "fill_container",
+                  "fill": "#1E1E1E",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#FFFFFF1A"
+                  },
+                  "descendants": {
+                    "YlUBi": {
+                      "fill": "#2D2D2D",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "#FFFFFF1A"
+                      }
+                    },
+                    "YlUBi/nVUHL": {
+                      "fill": "#FFFFFF80"
+                    },
+                    "6K7Xq": {
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": {
+                          "top": 1
+                        },
+                        "fill": "#FFFFFF1A"
+                      }
+                    },
+                    "LlvyP/uIibz": {
+                      "fill": "#FFFFFFB3"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "UPCxB",
+                  "name": "MemoList",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "LRTzm",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo1",
+                      "width": "fill_container",
+                      "fill": "#1E1E1E",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "#FFFFFF1A"
+                      },
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "Next.js 15에서 Server Actions 사용법 정리하기",
+                          "fill": "#FFFFFFB3"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 15. 오후 8:30",
+                          "fill": "#FFFFFF80"
+                        },
+                        "zhjiA": {
+                          "fill": "#FFFFFF80"
+                        }
+                      }
+                    },
+                    {
+                      "id": "e79Rz",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo2",
+                      "width": "fill_container",
+                      "fill": "#1E1E1E",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "#FFFFFF1A"
+                      },
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "Tailwind CSS v4 마이그레이션 가이드 읽어볼 것",
+                          "fill": "#FFFFFFB3"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 14. 오전 10:15",
+                          "fill": "#FFFFFF80"
+                        },
+                        "zhjiA": {
+                          "fill": "#FFFFFF80"
+                        }
+                      }
+                    },
+                    {
+                      "id": "iCClA",
+                      "type": "ref",
+                      "ref": "5OXLY",
+                      "name": "Memo3",
+                      "width": "fill_container",
+                      "fill": "#1E1E1E",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "#FFFFFF1A"
+                      },
+                      "descendants": {
+                        "XKf6V": {
+                          "content": "블로그에 댓글 기능 추가 고려 - Giscus vs Utterances 비교",
+                          "fill": "#FFFFFFB3"
+                        },
+                        "7U3Mx": {
+                          "content": "2025. 2. 13. 오후 5:20",
+                          "fill": "#FFFFFF80"
+                        },
+                        "zhjiA": {
+                          "fill": "#FFFFFF80"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NSYF6",
+          "type": "ref",
+          "ref": "ivTyo",
+          "name": "dkMemFooter",
+          "width": "fill_container",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "top": 1
+            },
+            "fill": "#FFFFFF1A"
+          },
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
