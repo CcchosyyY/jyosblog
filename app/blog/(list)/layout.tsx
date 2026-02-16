@@ -1,6 +1,5 @@
 import { getPostCountByCategory } from '@/lib/posts';
 import CategorySidebar from '@/components/CategorySidebar';
-import QuickMemoWidget from '@/components/QuickMemoWidget';
 
 export default async function BlogLayout({
   children,
@@ -15,7 +14,6 @@ export default async function BlogLayout({
         <div className="flex-1 min-w-0">{children}</div>
         <div className="hidden lg:flex flex-col gap-6 w-[280px] shrink-0">
           <CategorySidebar postCounts={postCounts} />
-          <QuickMemoWidget />
         </div>
       </div>
     </div>

@@ -49,7 +49,7 @@ export default function SearchBar({ posts }: SearchBarProps) {
   }, [query, posts]);
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-md">
+    <div ref={searchRef} className="relative w-full">
       <div className="relative">
         <input
           type="text"

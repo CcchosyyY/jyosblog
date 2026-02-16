@@ -227,6 +227,36 @@
                   "fontWeight": "500"
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "YG6RK",
+              "name": "ViewAllLink",
+              "reusable": true,
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wdliO",
+                  "name": "Label",
+                  "fill": "#135E90",
+                  "content": "모든 글 보기",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "pwcUa",
+                  "name": "Arrow",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "#135E90"
+                }
+              ]
             }
           ]
         },
@@ -2183,8 +2213,8 @@
     {
       "type": "frame",
       "id": "EqCYw",
-      "x": 764,
-      "y": 0,
+      "x": 0,
+      "y": 1275,
       "name": "New Atoms (Dark)",
       "fill": "#000000",
       "layout": "vertical",
@@ -2292,8 +2322,8 @@
     {
       "type": "frame",
       "id": "Pn3Qf",
-      "x": 1224,
-      "y": 0,
+      "x": 460,
+      "y": 1275,
       "name": "Molecules (Dark)",
       "fill": "#000000",
       "layout": "vertical",
@@ -2499,6 +2529,8 @@
             "thickness": 1,
             "fill": "#FFFFFF1A"
           },
+          "x": 40,
+          "y": 1085,
           "descendants": {
             "YlUBi": {
               "fill": "#2D2D2D",
@@ -2530,8 +2562,8 @@
     {
       "type": "frame",
       "id": "1D6Cb",
-      "x": 1804,
-      "y": 0,
+      "x": 0,
+      "y": 3385,
       "name": "Organisms (Dark)",
       "fill": "#000000",
       "layout": "vertical",
@@ -2899,8 +2931,8 @@
     {
       "type": "frame",
       "id": "qVwrS",
-      "x": 0,
-      "y": 1560,
+      "x": 1489,
+      "y": 0,
       "name": "Page: Home - Dark",
       "width": 1440,
       "fill": "#121212",
@@ -2920,6 +2952,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "dkHeader",
+          "x": 0,
+          "y": 0,
           "descendants": {
             "n9OwV": {
               "fill": "#B3001B33"
@@ -3055,12 +3089,14 @@
                   "ref": "joUqU",
                   "width": "fill_container",
                   "name": "dkHeroReplace",
+                  "alignItems": "center",
                   "descendants": {
                     "lautv": {
                       "fill": "#FFFFFF"
                     },
                     "tW14u": {
-                      "fill": "#FFFFFFB3"
+                      "fill": "#FFFFFFB3",
+                      "textAlign": "center"
                     }
                   }
                 },
@@ -3073,14 +3109,38 @@
                   "gap": 20,
                   "children": [
                     {
-                      "type": "text",
-                      "id": "7jauX",
-                      "name": "SectionTitle",
-                      "fill": "#FFFFFF",
-                      "content": "Recent Posts",
-                      "fontFamily": "Inter",
-                      "fontSize": 22,
-                      "fontWeight": "700"
+                      "type": "frame",
+                      "id": "JS74T",
+                      "name": "SectionHeader",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NWU45",
+                          "name": "SectionTitle",
+                          "fill": "#FFFFFF",
+                          "content": "Recent Posts",
+                          "fontFamily": "Inter",
+                          "fontSize": 22,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "id": "AZRMH",
+                          "type": "ref",
+                          "ref": "YG6RK",
+                          "name": "dkViewAll",
+                          "descendants": {
+                            "wdliO": {
+                              "fill": "#5BA8D9"
+                            },
+                            "pwcUa": {
+                              "fill": "#5BA8D9"
+                            }
+                          }
+                        }
+                      ]
                     },
                     {
                       "id": "dGoIZ",
@@ -3156,6 +3216,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "dkFooter",
+          "x": 0,
+          "y": 578,
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
@@ -3315,8 +3377,8 @@
     {
       "type": "frame",
       "id": "hSwZv",
-      "x": 0,
-      "y": 2726,
+      "x": 1489,
+      "y": 1229,
       "name": "Page: Blog List - Dark",
       "width": 1440,
       "fill": "#121212",
@@ -3336,6 +3398,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "bdHeader",
+          "x": 0,
+          "y": 0,
           "descendants": {
             "n9OwV": {
               "fill": "#B3001B33"
@@ -3599,6 +3663,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "bdFooter",
+          "x": 0,
+          "y": 474,
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
@@ -3830,8 +3896,8 @@
     {
       "type": "frame",
       "id": "NCs9M",
-      "x": 0,
-      "y": 3358,
+      "x": 1489,
+      "y": 1861,
       "name": "Page: Post Detail - Dark",
       "width": 1440,
       "fill": "#121212",
@@ -3851,6 +3917,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "ddHeader",
+          "x": 0,
+          "y": 0,
           "descendants": {
             "n9OwV": {
               "fill": "#B3001B33"
@@ -4090,6 +4158,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "ddFooter",
+          "x": 0,
+          "y": 614,
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
@@ -4131,11 +4201,11 @@
     {
       "type": "frame",
       "id": "r8tu1",
-      "x": 0,
-      "y": 4130,
+      "x": 3105,
+      "y": -471,
       "name": "Page: Admin Login - Dark",
-      "width": 1440,
-      "height": 900,
+      "width": 1123,
+      "height": 768,
       "fill": "#121212",
       "layout": "vertical",
       "justifyContent": "center",
@@ -4767,8 +4837,8 @@
     {
       "type": "frame",
       "id": "MsUTM",
-      "x": 0,
-      "y": 5130,
+      "x": 1489,
+      "y": 3633,
       "name": "Page: Admin Dashboard - Dark",
       "width": 1440,
       "fill": "#121212",
@@ -4788,6 +4858,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "addHeader",
+          "x": 0,
+          "y": 0,
           "descendants": {
             "n9OwV": {
               "fill": "#B3001B33"
@@ -5153,6 +5225,8 @@
             "fill": "#FFFFFF1A"
           },
           "name": "addFooter",
+          "x": 0,
+          "y": 553,
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
@@ -5350,8 +5424,8 @@
     {
       "type": "frame",
       "id": "sYWsb",
-      "x": 0,
-      "y": 5841,
+      "x": 1489,
+      "y": 4344,
       "name": "Page: Memos - Dark",
       "width": 1440,
       "fill": "#121212",
@@ -5371,6 +5445,8 @@
             },
             "fill": "#FFFFFF1A"
           },
+          "x": 0,
+          "y": 0,
           "descendants": {
             "n9OwV": {
               "fill": "#B3001B33"
@@ -5614,6 +5690,8 @@
             },
             "fill": "#FFFFFF1A"
           },
+          "x": 0,
+          "y": 848,
           "descendants": {
             "DOd3u": {
               "fill": "#FFFFFF80"
