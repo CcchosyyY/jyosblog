@@ -32,8 +32,11 @@ description: "Verify backend security patterns, auth flow, and Supabase error ha
 | `lib/supabase.ts` | Supabase client singleton |
 | `lib/posts.ts` | Post CRUD functions |
 | `lib/quick-memos.ts` | Quick memo CRUD functions |
-| `lib/categories.ts` | Category definitions |
+| `lib/categories.ts` | Category definitions + async CRUD |
+| `lib/settings.ts` | Blog settings CRUD functions |
 | `lib/suggest-category.ts` | Category suggestion |
+| `app/api/admin/settings/route.ts` | Blog settings API (GET, PUT) |
+| `app/api/admin/categories/route.ts` | Categories management API (GET, POST, PUT, DELETE) |
 | `middleware.ts` | Admin route protection |
 
 ## Workflow
@@ -178,5 +181,5 @@ Glob: "**/route.ts"
 ## Exceptions
 
 1. **Public API routes** - `app/api/posts/route.ts` GET handler does not require authentication (public read access)
-2. **Static data functions** - `lib/categories.ts` does not call Supabase and does not need try-catch
+2. **Static data functions** - Synchronous functions in `lib/categories.ts` (e.g., `getCategoryName`, `CATEGORIES` array) do not call Supabase and do not need try-catch. Async CRUD functions (`getCategories`, `createCategory`, etc.) DO require try-catch.
 3. **Build-time functions** - Functions only called during static generation (e.g., `getAllPosts` for `generateStaticParams`) may have different error handling requirements

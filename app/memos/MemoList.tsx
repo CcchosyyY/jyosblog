@@ -242,7 +242,7 @@ export default function MemoList({ initialMemos }: MemoListProps) {
                 </div>
                 <button
                   onClick={() => handleDelete(memo.id)}
-                  className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 text-muted hover:text-primary transition-all shrink-0"
+                  className="p-1 text-muted hover:text-primary transition-colors shrink-0"
                   title="Delete memo"
                 >
                   <svg

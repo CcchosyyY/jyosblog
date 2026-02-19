@@ -2,14 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { QuickMemo } from '@/lib/quick-memos';
-import { CATEGORIES } from '@/lib/categories';
 
 export default function QuickMemoWidget() {
   const [memos, setMemos] = useState<QuickMemo[]>([]);
   const [content, setContent] = useState('');
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [tagInput, setTagInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
@@ -36,31 +32,16 @@ export default function QuickMemoWidget() {
 
     setSaving(true);
     try {
-      const tags = tagInput
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean);
-
-      const body: Record<string, unknown> = {
-        content: content.trim(),
-      };
-      if (title.trim()) body.title = title.trim();
-      if (category) body.category = category;
-      if (tags.length > 0) body.tags = tags;
-
       const res = await fetch('/api/quick-memos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ content: content.trim() }),
       });
 
       if (res.ok) {
         const newMemo = await res.json();
         setMemos((prev) => [newMemo, ...prev]);
         setContent('');
-        setTitle('');
-        setCategory('');
-        setTagInput('');
       }
     } catch (error) {
       console.error('Failed to save memo:', error);
@@ -87,9 +68,6 @@ export default function QuickMemoWidget() {
     if (e.key === 'Escape') {
       setIsExpanded(false);
       setContent('');
-      setTitle('');
-      setCategory('');
-      setTagInput('');
     }
   };
 
@@ -106,9 +84,6 @@ export default function QuickMemoWidget() {
   const handleCancel = () => {
     setIsExpanded(false);
     setContent('');
-    setTitle('');
-    setCategory('');
-    setTagInput('');
   };
 
   return (
@@ -128,39 +103,6 @@ export default function QuickMemoWidget() {
       {/* Memo Input */}
       {isExpanded ? (
         <div className="flex flex-col gap-3">
-          {/* Title */}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Memo title..."
-            className="w-full px-3 py-2 rounded-lg border border-card-border bg-surface text-sm text-foreground placeholder-muted focus:outline-none"
-          />
-
-          {/* Category & Tags row */}
-          <div className="flex gap-2">
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-lg border border-card-border bg-surface text-sm text-foreground focus:outline-none"
-            >
-              <option value="">Category</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Tags (comma separated)"
-              className="flex-1 px-3 py-2 rounded-lg border border-card-border bg-surface text-sm text-foreground placeholder-muted focus:outline-none"
-            />
-          </div>
-
-          {/* Content */}
           <textarea
             ref={textareaRef}
             value={content}
