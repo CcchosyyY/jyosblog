@@ -29,7 +29,7 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
         <ul className="space-y-1">
           <li>
             <Link
-              href="/blog"
+              href="/"
               className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-[15px] font-medium transition-colors ${
                 isAllActive()
                   ? 'bg-[#B3001B1A] dark:bg-[#B3001B33] text-primary dark:text-[#FF1A1A] font-semibold'

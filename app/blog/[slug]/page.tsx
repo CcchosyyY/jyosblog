@@ -39,7 +39,7 @@ export default async function PostPage({ params }: Props) {
       <div className="flex flex-col gap-8">
         {/* Back Link */}
         <Link
-          href="/blog"
+          href="/"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-subtle hover:text-foreground transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>

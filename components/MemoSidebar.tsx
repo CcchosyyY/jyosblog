@@ -7,21 +7,18 @@ import { CATEGORIES, getCategoryName } from '@/lib/categories';
 interface MemoSidebarProps {
   category: string;
   onInsert: (content: string) => void;
-  isOpen: boolean;
-  onToggle: () => void;
 }
 
 export default function MemoSidebar({
   category,
   onInsert,
-  isOpen,
-  onToggle,
 }: MemoSidebarProps) {
   const [memos, setMemos] = useState<QuickMemo[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterCategory, setFilterCategory] = useState(category);
   const [unprocessedOnly, setUnprocessedOnly] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchMemos = useCallback(async () => {
     setLoading(true);
@@ -43,16 +40,15 @@ export default function MemoSidebar({
   }, [filterCategory, unprocessedOnly]);
 
   useEffect(() => {
-    if (isOpen) {
-      fetchMemos();
-    }
-  }, [isOpen, fetchMemos]);
+    fetchMemos();
+  }, [fetchMemos]);
 
   useEffect(() => {
     setFilterCategory(category);
   }, [category]);
 
-  const toggleSelect = (id: string) => {
+  const toggleSelect = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -62,6 +58,10 @@ export default function MemoSidebar({
       }
       return next;
     });
+  };
+
+  const toggleExpand = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
   };
 
   const markAsProcessed = async (ids: string[]) => {
@@ -77,12 +77,16 @@ export default function MemoSidebar({
         ids.forEach((id) => next.delete(id));
         return next;
       });
+      if (expandedId && ids.includes(expandedId)) {
+        setExpandedId(null);
+      }
     } catch (error) {
       console.error('Failed to mark as processed:', error);
     }
   };
 
-  const handleInsertSingle = async (memo: QuickMemo) => {
+  const handleInsertSingle = async (e: React.MouseEvent, memo: QuickMemo) => {
+    e.stopPropagation();
     onInsert(memo.content);
     await markAsProcessed([memo.id]);
   };
@@ -96,29 +100,22 @@ export default function MemoSidebar({
     setSelectedIds(new Set());
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="w-[320px] shrink-0 bg-card border border-card-border rounded-xl flex flex-col overflow-hidden h-fit max-h-[calc(100vh-200px)]">
+    <div className="flex flex-col overflow-hidden h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-card-border">
         <h3 className="text-base font-semibold text-foreground">Memos</h3>
-        <button
-          onClick={onToggle}
-          className="text-muted hover:text-foreground transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+          {memos.length}
+        </span>
       </div>
 
       {/* Filter Section */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-card-border">
+      <div className="px-4 py-3 border-b border-card-border">
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="flex-1 px-2.5 py-1.5 rounded-md border border-card-border bg-surface text-xs text-foreground focus:outline-none"
+          className="w-full px-2.5 py-1.5 rounded-md border border-card-border bg-surface text-xs text-foreground focus:outline-none"
         >
           <option value="">All</option>
           {CATEGORIES.map((cat) => (
@@ -127,77 +124,95 @@ export default function MemoSidebar({
             </option>
           ))}
         </select>
-        <label className="flex items-center gap-1.5 cursor-pointer">
-          <span className="text-[11px] text-subtle">Unprocessed</span>
-          <button
-            onClick={() => setUnprocessedOnly(!unprocessedOnly)}
-            className={`relative w-11 h-6 rounded-full transition-colors ${
-              unprocessedOnly ? 'bg-primary' : 'bg-surface border border-card-border'
-            }`}
-          >
-            <span
-              className={`absolute top-[2px] w-5 h-5 rounded-full bg-card transition-transform ${
-                unprocessedOnly ? 'translate-x-[22px]' : 'translate-x-[2px]'
-              }`}
-            />
-          </button>
-        </label>
       </div>
 
       {/* Memo List */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="p-4 text-center text-sm text-muted">Loading...</div>
+          <div className="p-4 text-center text-sm text-muted">
+            Loading...
+          </div>
         ) : memos.length === 0 ? (
-          <div className="p-4 text-center text-sm text-muted">No memos found</div>
+          <div className="p-4 text-center text-sm text-muted">
+            No memos found
+          </div>
         ) : (
-          memos.map((memo) => (
-            <div
-              key={memo.id}
-              className="flex gap-2.5 px-4 py-3 border-b border-card-border"
-            >
-              {/* Checkbox */}
-              <button
-                onClick={() => toggleSelect(memo.id)}
-                className={`shrink-0 w-4 h-4 mt-0.5 rounded border transition-colors ${
-                  selectedIds.has(memo.id)
-                    ? 'bg-primary border-primary'
-                    : 'border-card-border bg-card'
+          memos.map((memo) => {
+            const isExpanded = expandedId === memo.id;
+            return (
+              <div
+                key={memo.id}
+                onClick={() => toggleExpand(memo.id)}
+                className={`flex gap-2.5 px-4 py-3 border-b border-card-border cursor-pointer transition-colors ${
+                  isExpanded ? 'bg-surface' : 'hover:bg-surface/50'
                 }`}
               >
-                {selectedIds.has(memo.id) && (
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </button>
+                {/* Checkbox */}
+                <button
+                  onClick={(e) => toggleSelect(e, memo.id)}
+                  className={`shrink-0 w-4 h-4 mt-0.5 rounded border transition-colors ${
+                    selectedIds.has(memo.id)
+                      ? 'bg-primary border-primary'
+                      : 'border-card-border bg-card'
+                  }`}
+                >
+                  {selectedIds.has(memo.id) && (
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                {memo.title && (
-                  <p className="text-[13px] font-medium text-foreground truncate">
-                    {memo.title}
-                  </p>
-                )}
-                <p className="text-xs text-subtle line-clamp-2 mt-0.5">
-                  {memo.content}
-                </p>
-                {memo.category && (
-                  <span className="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-link/10 text-link">
-                    {getCategoryName(memo.category)}
-                  </span>
-                )}
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  {memo.title && (
+                    <p className="text-[13px] font-medium text-foreground truncate">
+                      {memo.title}
+                    </p>
+                  )}
+                  {isExpanded ? (
+                    <div className="space-y-2 mt-1">
+                      <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">
+                        {memo.content}
+                      </p>
+                      {memo.category && (
+                        <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded bg-link/10 text-link">
+                          {getCategoryName(memo.category)}
+                        </span>
+                      )}
+                      <button
+                        onClick={(e) => handleInsertSingle(e, memo)}
+                        className="w-full py-2 text-xs font-medium text-white bg-primary rounded-lg hover:bg-primary/80 transition-colors"
+                      >
+                        Insert
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-subtle line-clamp-1 mt-0.5">
+                        {memo.content}
+                      </p>
+                      {memo.category && (
+                        <span className="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-link/10 text-link">
+                          {getCategoryName(memo.category)}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-
-              {/* Insert button */}
-              <button
-                onClick={() => handleInsertSingle(memo)}
-                className="shrink-0 self-start px-2 py-1 text-[11px] font-medium text-link bg-link/10 rounded hover:bg-link/20 transition-colors"
-              >
-                Insert
-              </button>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

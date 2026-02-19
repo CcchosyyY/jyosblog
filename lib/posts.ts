@@ -165,6 +165,7 @@ export interface CreatePostInput {
   tags?: string[];
   status?: 'draft' | 'published';
   suggested_category?: string;
+  thumbnail?: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {

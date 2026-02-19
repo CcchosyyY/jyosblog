@@ -41,6 +41,11 @@ export default function BlogSidebar({ postCounts }: BlogSidebarProps) {
         </div>
       </div>
 
+      {/* Quick Memo */}
+      <div className="px-3 pb-3">
+        <QuickMemoWidget />
+      </div>
+
       {/* Categories */}
       <nav className="flex-1 px-3">
         <h3 className="px-4 text-xs font-semibold text-muted uppercase tracking-wider mb-2">
@@ -49,7 +54,7 @@ export default function BlogSidebar({ postCounts }: BlogSidebarProps) {
         <ul className="space-y-1">
           <li>
             <Link
-              href="/blog"
+              href="/"
               className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isAllActive()
                   ? 'bg-primary/10 text-primary'
@@ -86,10 +91,6 @@ export default function BlogSidebar({ postCounts }: BlogSidebarProps) {
         </ul>
       </nav>
 
-      {/* Quick Memo */}
-      <div className="p-3 border-t border-card-border">
-        <QuickMemoWidget />
-      </div>
     </aside>
   );
 }

@@ -34,6 +34,7 @@ export interface Post {
   tags: string[];
   status: 'draft' | 'published';
   suggested_category: string | null;
+  thumbnail: string | null;
   created_at: string;
   updated_at: string;
   published_at: string | null;

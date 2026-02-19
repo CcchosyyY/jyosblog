@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
-  { href: '/blog', label: 'Blog' },
+  { href: '/', label: 'Blog' },
+  { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
-  { href: '/memos', label: 'Memo' },
 ];
 
 export default function Header() {
@@ -26,7 +26,7 @@ export default function Header() {
   }, [isMenuOpen]);
 
   const isActive = (href: string) => {
-    if (href === '/blog') return pathname === '/blog' || pathname.startsWith('/blog/');
+    if (href === '/') return pathname === '/' || pathname.startsWith('/blog');
     return pathname === href;
   };
 
@@ -63,7 +63,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-1">
             <ThemeToggle />
             <Link
-              href="/blog"
+              href="/"
               className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
               aria-label="Search"
             >

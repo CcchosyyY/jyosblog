@@ -8,7 +8,7 @@ const MOCK_POSTS = [
     slug: 'nextjs-15-app-router',
     title: 'Next.js 15 App Router로 블로그 만들기',
     description:
-      'Next.js 15의 App Router를 활용하여 개인 블로그를 처음부터 끝까지 구축하는 과정을 정리했습니다. 서버 컴포넌트, 라우팅, 메타데이터 설정 등을 다룹니다.',
+      'Next.js 15의 App Router를 활용하여 개인 블로그를 처음부터 끝까지 구축하는 과정을 정리했습니다.',
     category: 'dev',
     date: '2026-02-18',
     tags: ['Next.js', 'React', 'TypeScript'],
@@ -17,7 +17,7 @@ const MOCK_POSTS = [
     slug: 'supabase-auth-session',
     title: 'Supabase로 관리자 인증 시스템 구현하기',
     description:
-      '환경변수 기반 비밀번호 비교와 Supabase 세션 테이블을 활용한 간단하고 안전한 관리자 인증 플로우를 만들어 봤습니다.',
+      '환경변수 기반 비밀번호 비교와 Supabase 세션 테이블을 활용한 간단하고 안전한 관리자 인증 플로우.',
     category: 'dev',
     date: '2026-02-15',
     tags: ['Supabase', 'Auth', 'Security'],
@@ -26,16 +26,16 @@ const MOCK_POSTS = [
     slug: 'tailwind-dark-mode',
     title: 'CSS 변수로 깔끔한 다크모드 구현',
     description:
-      'Tailwind CSS와 CSS 변수를 조합해서 dark: prefix 없이도 자연스럽게 테마가 전환되는 방법을 소개합니다.',
+      'Tailwind CSS와 CSS 변수를 조합해서 dark: prefix 없이도 자연스럽게 테마가 전환되는 방법.',
     category: 'dev',
     date: '2026-02-12',
     tags: ['Tailwind', 'CSS', 'Dark Mode'],
   },
   {
     slug: 'weekly-cooking-log',
-    title: '이번 주 요리 기록 - 된장찌개와 계란말이',
+    title: '이번 주 요리 기록',
     description:
-      '주말에 만들어 본 된장찌개와 계란말이 레시피 정리. 다음에 또 만들 때 참고하려고 기록해둡니다.',
+      '주말에 만들어 본 된장찌개와 계란말이 레시피 정리. 다음에 또 만들 때 참고하려고 기록.',
     category: 'cooking',
     date: '2026-02-10',
     tags: ['요리', '레시피'],
@@ -49,13 +49,39 @@ const MOCK_POSTS = [
     date: '2026-02-08',
     tags: ['일상', '루틴'],
   },
+  {
+    slug: 'typescript-tips',
+    title: 'TypeScript 실전 팁 모음',
+    description:
+      '프로젝트에서 자주 쓰는 TypeScript 패턴과 유틸리티 타입을 정리한 실전 팁 모음집.',
+    category: 'study',
+    date: '2026-02-05',
+    tags: ['TypeScript', 'Tips'],
+  },
 ];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  dev: 'from-blue-500/20 to-indigo-500/20',
+  cooking: 'from-orange-500/20 to-red-500/20',
+  daily: 'from-green-500/20 to-teal-500/20',
+  study: 'from-purple-500/20 to-pink-500/20',
+  exercise: 'from-yellow-500/20 to-amber-500/20',
+};
+
+const CATEGORY_ICONS: Record<string, string> = {
+  dev: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+  cooking: 'M12 6v6m0 0v6m0-6h6m-6 0H6',
+  daily: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707',
+  study: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+  exercise: 'M13 10V3L4 14h7v7l9-11h-7z',
+};
 
 export default async function Home() {
   const postCounts = await getPostCountByCategory();
   const allPosts = await getAllPosts();
-  const recentPosts =
-    allPosts.length > 0 ? allPosts.slice(0, 5) : MOCK_POSTS;
+  const posts = allPosts.length > 0 ? allPosts : MOCK_POSTS;
+  const recentPosts = posts.slice(0, 5);
+  const featuredPosts = posts.slice(0, 6);
 
   return (
     <div className="flex">
@@ -63,30 +89,97 @@ export default async function Home() {
 
       {/* Main Content */}
       <div className="flex-1 min-w-0">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-6 pt-10">
-          <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">
-            Recent
-          </h2>
-          <ul>
-            {recentPosts.map((post, index) => (
-              <li
-                key={post.slug}
-                className={index !== 0 ? 'border-t border-card-border' : ''}
-              >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-8">
+          {/* Recent List */}
+          <div className="max-w-2xl">
+            <div className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm">
+              <div className="px-4 py-2.5 border-b border-card-border">
+                <h2 className="text-[11px] font-semibold text-muted uppercase tracking-wider">
+                  Recent
+                </h2>
+              </div>
+              <ul>
+                {recentPosts.map((post, index) => (
+                  <li key={post.slug}>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 transition-colors ${
+                        index !== 0 ? 'border-t border-card-border' : ''
+                      }`}
+                    >
+                      <span className="text-[12px] text-foreground group-hover:text-primary transition-colors truncate">
+                        {post.title}
+                      </span>
+                      <time className="text-[10px] text-muted shrink-0 ml-6 tabular-nums">
+                        {post.date}
+                      </time>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Featured Posts Grid */}
+          <div>
+            <h2 className="text-[11px] font-semibold text-muted uppercase tracking-wider mb-3">
+              Featured
+            </h2>
+            <div className="grid grid-cols-3 gap-4">
+              {featuredPosts.map((post) => (
                 <Link
+                  key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="flex items-center justify-between py-2.5 group"
+                  className="group"
                 >
-                  <span className="text-[13px] text-foreground group-hover:text-primary transition-colors truncate">
-                    {post.title}
-                  </span>
-                  <time className="text-[11px] text-muted shrink-0 ml-6 tabular-nums">
-                    {post.date}
-                  </time>
+                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
+                    {/* Thumbnail */}
+                    <div
+                      className={`aspect-[16/10] bg-gradient-to-br ${
+                        CATEGORY_COLORS[post.category] || 'from-gray-500/20 to-gray-600/20'
+                      } flex items-center justify-center`}
+                    >
+                      <svg
+                        className="w-8 h-8 text-muted/40"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d={
+                            CATEGORY_ICONS[post.category] ||
+                            'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'
+                          }
+                        />
+                      </svg>
+                    </div>
+                    {/* Content */}
+                    <div className="p-3">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-[10px] font-medium text-primary">
+                          {getCategoryName(post.category)}
+                        </span>
+                        <span className="text-[10px] text-muted">
+                          {post.date}
+                        </span>
+                      </div>
+                      <h3 className="text-[13px] font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
+                        {post.title}
+                      </h3>
+                      {post.description && (
+                        <p className="mt-1 text-[11px] text-subtle leading-relaxed line-clamp-2">
+                          {post.description}
+                        </p>
+                      )}
+                    </div>
+                  </article>
                 </Link>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
