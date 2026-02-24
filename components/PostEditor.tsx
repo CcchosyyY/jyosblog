@@ -11,12 +11,14 @@ import MarkdownToolbar from '@/components/MarkdownToolbar';
 interface PostEditorProps {
   post?: Post;
   initialMemoId?: string;
+  initialTemplate?: string;
   onInsertRef?: React.MutableRefObject<((content: string) => void) | null>;
 }
 
 export default function PostEditor({
   post,
   initialMemoId,
+  initialTemplate,
   onInsertRef,
 }: PostEditorProps) {
   const router = useRouter();
@@ -89,6 +91,28 @@ export default function PostEditor({
 
     fetchMemo();
   }, [initialMemoId, isEditing]);
+
+  useEffect(() => {
+    if (!initialTemplate || isEditing) return;
+
+    if (initialTemplate === 'devlog') {
+      const today = new Date();
+      const dateStr = today
+        .toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replace(/\. /g, '-')
+        .replace('.', '');
+      setTitle(`${dateStr} 개발일지`);
+      setCategory('daily');
+      setTags('devlog');
+      setContent(
+        `## 오늘 한 일\n\n- \n\n## 배운 점\n\n- \n\n## 내일 할 일\n\n- \n`
+      );
+    }
+  }, [initialTemplate, isEditing]);
 
   useEffect(() => {
     if (content.length > 50) {

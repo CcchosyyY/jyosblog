@@ -115,9 +115,31 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 py-10">
-      <h1 className="text-[28px] font-bold text-foreground mb-8">
-        Dashboard
-      </h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-[28px] font-bold text-foreground">
+          Dashboard
+        </h1>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/write?template=devlog"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-secondary/10 text-secondary border border-secondary/20 rounded-lg text-sm font-medium hover:bg-secondary/20 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            개발일지 쓰기
+          </Link>
+          <Link
+            href="/admin/write"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/80 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            새 글 작성
+          </Link>
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-8">

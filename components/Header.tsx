@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
@@ -18,8 +18,6 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -45,30 +43,15 @@ export default function Header() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (showDropdown) setShowDropdown(false);
-        if (isMenuOpen) setIsMenuOpen(false);
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
       }
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isMenuOpen, showDropdown]);
+  }, [isMenuOpen]);
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/' || pathname.startsWith('/blog');
@@ -76,9 +59,14 @@ export default function Header() {
   };
 
   const handleLogout = async () => {
-    setShowDropdown(false);
     try {
+      // Sign out from browser client first (clears in-memory session)
+      const supabase = getSupabaseBrowser();
+      await supabase.auth.signOut();
+
+      // Sign out from server (clears DB session + cookies)
       await fetch('/api/auth/logout', { method: 'POST' });
+
       setUser(null);
       setIsAdmin(false);
       router.push('/');
@@ -149,11 +137,11 @@ export default function Header() {
 
             {/* User area */}
             {user ? (
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setShowDropdown(!showDropdown)}
+              <div className="flex items-center gap-1">
+                <Link
+                  href={isAdmin ? '/admin' : '/dashboard'}
                   className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
-                  aria-label="User menu"
+                  aria-label="Dashboard"
                 >
                   {avatarUrl ? (
                     <Image
@@ -168,37 +156,16 @@ export default function Header() {
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                   )}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
+                  aria-label="Logout"
+                >
+                  <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
                 </button>
-
-                {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-card border border-card-border rounded-lg shadow-lg py-1 z-50">
-                    <div className="px-4 py-2 border-b border-card-border">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {displayName}
-                      </p>
-                      <p className="text-xs text-muted truncate">
-                        {user.email}
-                      </p>
-                    </div>
-
-                    {isAdmin && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setShowDropdown(false)}
-                        className="block px-4 py-2 text-sm text-foreground hover:bg-surface transition-colors"
-                      >
-                        Dashboard
-                      </Link>
-                    )}
-
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-surface transition-colors"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
               </div>
             ) : (
               <Link
@@ -227,25 +194,36 @@ export default function Header() {
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
             {user ? (
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="p-2 rounded-lg hover:bg-surface transition-colors"
-                aria-label="User menu"
-              >
-                {avatarUrl ? (
-                  <Image
-                    src={avatarUrl}
-                    alt={displayName}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </button>
+              <>
+                <Link
+                  href={isAdmin ? '/admin' : '/dashboard'}
+                  className="p-2 rounded-lg hover:bg-surface transition-colors"
+                  aria-label="Dashboard"
+                >
+                  {avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={displayName}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
+                  aria-label="Logout"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </>
             ) : null}
             <button
               className="p-2 rounded-lg hover:bg-surface transition-colors"
@@ -277,33 +255,6 @@ export default function Header() {
             </button>
           </div>
         </div>
-
-        {/* Mobile Dropdown (user) */}
-        {showDropdown && (
-          <div className="md:hidden py-2 border-t border-card-border" ref={dropdownRef}>
-            <div className="px-3 py-2">
-              <p className="text-sm font-medium text-foreground truncate">
-                {displayName}
-              </p>
-              <p className="text-xs text-muted truncate">{user?.email}</p>
-            </div>
-            {isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => setShowDropdown(false)}
-                className="block px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg transition-colors"
-              >
-                Dashboard
-              </Link>
-            )}
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-surface rounded-lg transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        )}
 
         {/* Mobile Navigation */}
         {isMenuOpen && (

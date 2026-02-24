@@ -9,6 +9,7 @@ import MemoSidebar from '@/components/MemoSidebar';
 function WritePageContent() {
   const searchParams = useSearchParams();
   const memoId = searchParams.get('memoId') || undefined;
+  const template = searchParams.get('template') || undefined;
   const [category, setCategory] = useState('daily');
   const [showMobileMemos, setShowMobileMemos] = useState(false);
   const insertRef = useRef<((content: string) => void) | null>(null);
@@ -74,7 +75,7 @@ function WritePageContent() {
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
           <div className="flex-1 min-w-0">
-            <PostEditor initialMemoId={memoId} onInsertRef={insertRef} />
+            <PostEditor initialMemoId={memoId} initialTemplate={template} onInsertRef={insertRef} />
           </div>
 
           <div className="hidden lg:block w-[320px] shrink-0 sticky top-[73px] max-h-[calc(100vh-73px)] bg-card border border-card-border rounded-xl overflow-hidden">
