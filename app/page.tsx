@@ -103,7 +103,7 @@ export default async function Home() {
                   <li key={post.slug}>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 transition-colors ${
+                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 hover:scale-[1.02] hover:-translate-x-0.5 transition-all duration-200 ${
                         index !== 0 ? 'border-t border-card-border' : ''
                       }`}
                     >
@@ -132,7 +132,7 @@ export default async function Home() {
                   href={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
+                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 hover:scale-[1.03] hover:-translate-y-1 transition-all duration-200">
                     {/* Thumbnail */}
                     <div
                       className={`aspect-[16/10] bg-gradient-to-br ${
