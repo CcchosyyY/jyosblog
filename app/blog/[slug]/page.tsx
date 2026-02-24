@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import TableOfContents from '@/components/TableOfContents';
+import LikeButton from '@/components/LikeButton';
+import ViewCounter from '@/components/ViewCounter';
+import CommentSection from '@/components/CommentSection';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -60,6 +63,8 @@ export default async function PostPage({ params }: Props) {
                 {post.tags[0]}
               </span>
             )}
+            <ViewCounter postId={post.id} />
+            <LikeButton postId={post.id} />
           </div>
         </header>
 
@@ -88,6 +93,9 @@ export default async function PostPage({ params }: Props) {
             ))}
           </div>
         )}
+
+        {/* Comments */}
+        <CommentSection postId={post.id} />
       </div>
     </article>
   );

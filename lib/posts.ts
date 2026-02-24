@@ -5,6 +5,7 @@ export { CATEGORIES, getCategoryName };
 export type { CategoryId } from './categories';
 
 export interface PostMeta {
+  id: string;
   title: string;
   description: string;
   date: string;
@@ -27,6 +28,7 @@ function calculateReadingTime(content: string): string {
 
 function mapPostToMeta(post: Post): PostMeta {
   return {
+    id: post.id,
     title: post.title,
     description: post.description || '',
     date: post.published_at || post.created_at,
@@ -37,14 +39,25 @@ function mapPostToMeta(post: Post): PostMeta {
   };
 }
 
-export async function getAllPosts(): Promise<PostMeta[]> {
+export async function getAllPosts(
+  options?: { offset?: number; limit?: number }
+): Promise<PostMeta[]> {
   try {
     const supabase = getSupabase();
-    const { data, error } = await supabase
+    let query = supabase
       .from('posts')
       .select('*')
       .eq('status', 'published')
       .order('published_at', { ascending: false });
+
+    if (options?.offset !== undefined && options?.limit !== undefined) {
+      query = query.range(
+        options.offset,
+        options.offset + options.limit - 1
+      );
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching posts:', error);
@@ -55,6 +68,26 @@ export async function getAllPosts(): Promise<PostMeta[]> {
   } catch (e) {
     console.error('Supabase not configured:', e);
     return [];
+  }
+}
+
+export async function getPublishedPostCount(): Promise<number> {
+  try {
+    const supabase = getSupabase();
+    const { count, error } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'published');
+
+    if (error) {
+      console.error('Error fetching post count:', error);
+      return 0;
+    }
+
+    return count || 0;
+  } catch (e) {
+    console.error('Supabase not configured:', e);
+    return 0;
   }
 }
 

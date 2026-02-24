@@ -115,13 +115,21 @@ export default function Header() {
           {/* Actions */}
           <div className="hidden md:flex items-center gap-1">
             <ThemeToggle />
-            <Link
-              href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
+            <button
+              onClick={() => {
+                document.dispatchEvent(
+                  new KeyboardEvent('keydown', {
+                    key: 'k',
+                    metaKey: true,
+                    bubbles: true,
+                  })
+                );
+              }}
+              className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-card-border hover:bg-surface transition-colors"
               aria-label="Search"
             >
               <svg
-                className="w-5 h-5 text-primary"
+                className="w-4 h-4 text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -133,7 +141,10 @@ export default function Header() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </Link>
+              <kbd className="hidden sm:inline text-[10px] font-medium text-muted bg-surface px-1 py-0.5 rounded border border-card-border">
+                Ctrl+K
+              </kbd>
+            </button>
 
             {/* User area */}
             {user ? (
