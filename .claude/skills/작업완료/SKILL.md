@@ -153,6 +153,11 @@ SUPABASE_KEY=$(grep NEXT_PUBLIC_SUPABASE_ANON_KEY .env.local | cut -d'=' -f2)
 SLUG="devlog-$(date +%Y-%m-%d)"
 TODAY=$(date +%Y-%m-%d)
 
+# project_id 결정: 현재 프로젝트 디렉토리 기준
+# - MyBlog 디렉토리 → "jyos-blog"
+# - 다른 프로젝트 → CLAUDE.md에서 project slug 읽기 또는 디렉토리명 사용
+PROJECT_ID="jyos-blog"  # 기본값 (MyBlog 프로젝트)
+
 curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
   -H "apikey: ${SUPABASE_KEY}" \
   -H "Authorization: Bearer ${SUPABASE_KEY}" \
@@ -166,9 +171,15 @@ curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
     "category": "dev",
     "tags": ["devlog"],
     "status": "published",
-    "published_at": "'${TODAY}'T00:00:00.000Z"
+    "published_at": "'${TODAY}'T00:00:00.000Z",
+    "project_id": "'${PROJECT_ID}'"
   }'
 ```
+
+**project_id 결정 규칙:**
+- MyBlog 프로젝트에서 실행 시: `"jyos-blog"`
+- 다른 프로젝트에서 실행 시: 해당 프로젝트의 CLAUDE.md에서 project slug를 읽거나, 디렉토리명을 slug로 변환하여 사용
+- Supabase `projects` 테이블에 해당 id가 없으면 project_id를 null로 설정
 
 **slug 충돌 시:** 같은 날짜에 이미 devlog가 있으면 `devlog-YYYY-MM-DD-2` 형식으로 suffix 추가.
 

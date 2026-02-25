@@ -12,7 +12,7 @@ export default async function MemosPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <header className="mb-6">
-        <h1 className="text-[32px] font-bold text-foreground mb-2">
+        <h1 className="text-heading-xl font-bold text-foreground mb-2">
           Memos
         </h1>
         <p className="text-subtle text-sm">

@@ -45,23 +45,25 @@ export default async function CategoryPage({ params }: Props) {
   }));
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Search */}
-      <SearchBar posts={searchPosts} />
-
-      {/* Category Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-1">
-          {categoryName}
-        </h2>
-        <p className="text-subtle text-sm">
-          {posts.length}개의 글
-        </p>
+    <div className="flex flex-col gap-5">
+      {/* Category Header + Search */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-0.5">
+            {categoryName}
+          </h2>
+          <p className="text-subtle text-sm">
+            {posts.length}개의 글
+          </p>
+        </div>
+        <div className="w-48">
+          <SearchBar posts={searchPosts} />
+        </div>
       </div>
 
       {/* Posts */}
       {posts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {posts.map((post) => (
             <PostCard
               key={post.slug}

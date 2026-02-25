@@ -61,10 +61,10 @@ export default function SearchBar({ posts }: SearchBarProps) {
             setIsOpen(true);
           }}
           onFocus={() => setIsOpen(true)}
-          className="w-full px-4 py-2.5 pl-10 bg-surface border border-card-border rounded-lg text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+          className="w-full px-3 py-1.5 pl-8 bg-surface border border-card-border rounded-md text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-xs"
         />
         <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

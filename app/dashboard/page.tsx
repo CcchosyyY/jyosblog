@@ -39,7 +39,7 @@ export default function UserDashboard() {
   return (
     <div className="min-h-[calc(100vh-56px)] bg-background">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 className="text-[28px] font-bold text-foreground mb-2">
+        <h1 className="text-heading-lg font-bold text-foreground mb-2">
           My Dashboard
         </h1>
         <p className="text-subtle mb-8">

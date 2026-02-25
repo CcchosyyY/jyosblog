@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Avatar from '@/components/Avatar';
 
 interface ProfileCardProps {
   userId: string;
@@ -52,19 +52,11 @@ export default function ProfileCard({ userId }: ProfileCardProps) {
   return (
     <div className="p-6 bg-card rounded-xl border border-card-border">
       <div className="flex items-center gap-4">
-        {profile?.avatar_url ? (
-          <Image
-            src={profile.avatar_url}
-            alt={displayName}
-            width={64}
-            height={64}
-            className="rounded-full"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-        )}
+        <Avatar
+          src={profile?.avatar_url}
+          name={displayName}
+          size="xl"
+        />
         <div>
           <h2 className="text-lg font-semibold text-foreground">
             {displayName}

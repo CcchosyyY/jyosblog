@@ -61,11 +61,12 @@ const MOCK_POSTS = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  dev: 'from-blue-500/20 to-indigo-500/20',
-  cooking: 'from-orange-500/20 to-red-500/20',
-  daily: 'from-green-500/20 to-teal-500/20',
-  study: 'from-purple-500/20 to-pink-500/20',
-  exercise: 'from-yellow-500/20 to-amber-500/20',
+  dev: 'from-cat-dev/20 to-cat-dev/10',
+  cooking: 'from-cat-cooking/20 to-cat-cooking/10',
+  daily: 'from-cat-daily/20 to-cat-daily/10',
+  study: 'from-cat-study/20 to-cat-study/10',
+  exercise: 'from-cat-exercise/20 to-cat-exercise/10',
+  invest: 'from-cat-invest/20 to-cat-invest/10',
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -74,6 +75,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   daily: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707',
   study: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
   exercise: 'M13 10V3L4 14h7v7l9-11h-7z',
+  invest: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1',
 };
 
 export default async function Home() {
@@ -94,7 +96,7 @@ export default async function Home() {
           <div className="max-w-2xl">
             <div className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm">
               <div className="px-4 py-2.5 border-b border-card-border">
-                <h2 className="text-[11px] font-semibold text-muted uppercase tracking-wider">
+                <h2 className="text-caption-sm font-semibold text-muted uppercase tracking-wider">
                   Recent
                 </h2>
               </div>
@@ -103,14 +105,14 @@ export default async function Home() {
                   <li key={post.slug}>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 hover:scale-[1.02] hover:-translate-x-0.5 transition-all duration-200 ${
+                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 transition-all duration-200 ${
                         index !== 0 ? 'border-t border-card-border' : ''
                       }`}
                     >
-                      <span className="text-[12px] text-foreground group-hover:text-primary transition-colors truncate">
+                      <span className="text-caption text-foreground group-hover:text-primary transition-colors truncate">
                         {post.title}
                       </span>
-                      <time className="text-[10px] text-muted shrink-0 ml-6 tabular-nums">
+                      <time className="text-caption-xs text-muted shrink-0 ml-6 tabular-nums">
                         {post.date}
                       </time>
                     </Link>
@@ -122,7 +124,7 @@ export default async function Home() {
 
           {/* Featured Posts Grid */}
           <div>
-            <h2 className="text-[11px] font-semibold text-muted uppercase tracking-wider mb-3">
+            <h2 className="text-caption-sm font-semibold text-muted uppercase tracking-wider mb-3">
               Featured
             </h2>
             <div className="grid grid-cols-3 gap-4">
@@ -132,11 +134,11 @@ export default async function Home() {
                   href={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 hover:scale-[1.03] hover:-translate-y-1 transition-all duration-200">
+                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-200">
                     {/* Thumbnail */}
                     <div
                       className={`aspect-[16/10] bg-gradient-to-br ${
-                        CATEGORY_COLORS[post.category] || 'from-gray-500/20 to-gray-600/20'
+                        CATEGORY_COLORS[post.category] || 'from-muted/20 to-muted/10'
                       } flex items-center justify-center`}
                     >
                       <svg
@@ -159,18 +161,18 @@ export default async function Home() {
                     {/* Content */}
                     <div className="p-3">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-medium text-primary">
+                        <span className="text-caption-xs font-medium text-primary">
                           {getCategoryName(post.category)}
                         </span>
-                        <span className="text-[10px] text-muted">
+                        <span className="text-caption-xs text-muted">
                           {post.date}
                         </span>
                       </div>
-                      <h3 className="text-[13px] font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
+                      <h3 className="text-body-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
                         {post.title}
                       </h3>
                       {post.description && (
-                        <p className="mt-1 text-[11px] text-subtle leading-relaxed line-clamp-2">
+                        <p className="mt-1 text-caption-sm text-subtle leading-relaxed line-clamp-2">
                           {post.description}
                         </p>
                       )}

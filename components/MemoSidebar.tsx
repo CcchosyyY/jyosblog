@@ -176,7 +176,7 @@ export default function MemoSidebar({
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   {memo.title && (
-                    <p className="text-[13px] font-medium text-foreground truncate">
+                    <p className="text-body-sm font-medium text-foreground truncate">
                       {memo.title}
                     </p>
                   )}
@@ -186,7 +186,7 @@ export default function MemoSidebar({
                         {memo.content}
                       </p>
                       {memo.category && (
-                        <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded bg-link/10 text-link">
+                        <span className="inline-block px-1.5 py-0.5 text-caption-xs font-medium rounded bg-link/10 text-link">
                           {getCategoryName(memo.category)}
                         </span>
                       )}
@@ -203,7 +203,7 @@ export default function MemoSidebar({
                         {memo.content}
                       </p>
                       {memo.category && (
-                        <span className="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-link/10 text-link">
+                        <span className="inline-block mt-1 px-1.5 py-0.5 text-caption-xs font-medium rounded bg-link/10 text-link">
                           {getCategoryName(memo.category)}
                         </span>
                       )}

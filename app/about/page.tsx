@@ -61,7 +61,7 @@ export default function AboutPage() {
           <h1 className="text-2xl font-bold text-foreground">
             Jyo
           </h1>
-          <p className="text-subtle mt-1 text-[15px]">
+          <p className="text-subtle mt-1 text-body-lg">
             Developer & Blogger
           </p>
           <p className="text-muted mt-4 text-sm leading-relaxed max-w-lg">
@@ -96,10 +96,10 @@ export default function AboutPage() {
               className="bg-card border border-card-border rounded-lg px-4 py-3 hover:border-primary/30 transition-colors"
             >
               <div className="text-lg mb-1">{tech.icon}</div>
-              <div className="text-[13px] font-semibold text-foreground">
+              <div className="text-body-sm font-semibold text-foreground">
                 {tech.name}
               </div>
-              <div className="text-[11px] text-muted">{tech.desc}</div>
+              <div className="text-caption-sm text-muted">{tech.desc}</div>
             </div>
           ))}
         </div>
@@ -127,17 +127,17 @@ export default function AboutPage() {
                 />
 
                 <div>
-                  <time className="text-[11px] font-medium text-muted uppercase tracking-wider">
+                  <time className="text-caption-sm font-medium text-muted uppercase tracking-wider">
                     {entry.date}
                   </time>
-                  <h3 className="text-[15px] font-semibold text-foreground mt-1">
+                  <h3 className="text-body-lg font-semibold text-foreground mt-1">
                     {entry.title}
                   </h3>
                   <ul className="mt-2.5 space-y-1.5">
                     {entry.items.map((item, j) => (
                       <li
                         key={j}
-                        className="text-[13px] text-subtle leading-relaxed flex items-start gap-2"
+                        className="text-body-sm text-subtle leading-relaxed flex items-start gap-2"
                       >
                         <span className="text-muted mt-1 shrink-0">·</span>
                         {item}
@@ -156,7 +156,7 @@ export default function AboutPage() {
         <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">
           About This Blog
         </h2>
-        <p className="text-[13px] text-subtle leading-relaxed">
+        <p className="text-body-sm text-subtle leading-relaxed">
           이 블로그는 Next.js 15 App Router와 Supabase를 기반으로
           직접 설계하고 만들었습니다. Pencil 디자인 툴로 UI를 먼저 그리고,
           Claude Code와 함께 코드로 옮기는 방식으로 개발하고 있습니다.
@@ -164,23 +164,23 @@ export default function AboutPage() {
         </p>
         <div className="flex items-center gap-6 mt-4 pt-4 border-t border-card-border">
           <div>
-            <div className="text-[18px] font-bold text-foreground">5+</div>
-            <div className="text-[11px] text-muted">Categories</div>
+            <div className="text-lg font-bold text-foreground">5+</div>
+            <div className="text-caption-sm text-muted">Categories</div>
           </div>
           <div className="w-px h-8 bg-card-border" />
           <div>
-            <div className="text-[18px] font-bold text-foreground">MDX</div>
-            <div className="text-[11px] text-muted">Content Format</div>
+            <div className="text-lg font-bold text-foreground">MDX</div>
+            <div className="text-caption-sm text-muted">Content Format</div>
           </div>
           <div className="w-px h-8 bg-card-border" />
           <div>
-            <div className="text-[18px] font-bold text-foreground">SSR</div>
-            <div className="text-[11px] text-muted">Rendering</div>
+            <div className="text-lg font-bold text-foreground">SSR</div>
+            <div className="text-caption-sm text-muted">Rendering</div>
           </div>
           <div className="w-px h-8 bg-card-border" />
           <div>
-            <div className="text-[18px] font-bold text-primary">Live</div>
-            <div className="text-[11px] text-muted">Vercel Deploy</div>
+            <div className="text-lg font-bold text-primary">Live</div>
+            <div className="text-caption-sm text-muted">Vercel Deploy</div>
           </div>
         </div>
       </section>

@@ -1,21 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createSupabaseFromRequest } from '@/lib/supabase-server';
 import { getProfile, upsertProfile } from '@/lib/profiles';
-
-function createSupabaseFromRequest(request: NextRequest) {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll() {},
-      },
-    }
-  );
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -64,6 +49,36 @@ export async function PUT(request: NextRequest) {
   }
 
   const { nickname, avatar_url, bio } = body;
+
+  if (nickname !== undefined) {
+    if (typeof nickname !== 'string' || nickname.length > 50) {
+      return NextResponse.json(
+        { error: 'nickname must be a string with max 50 characters' },
+        { status: 400 }
+      );
+    }
+  }
+
+  if (bio !== undefined) {
+    if (typeof bio !== 'string' || bio.length > 500) {
+      return NextResponse.json(
+        { error: 'bio must be a string with max 500 characters' },
+        { status: 400 }
+      );
+    }
+  }
+
+  if (avatar_url !== undefined && avatar_url !== null) {
+    if (
+      typeof avatar_url !== 'string' ||
+      !avatar_url.startsWith('http')
+    ) {
+      return NextResponse.json(
+        { error: 'avatar_url must be a valid URL starting with http' },
+        { status: 400 }
+      );
+    }
+  }
 
   const profile = await upsertProfile(user.id, {
     nickname,

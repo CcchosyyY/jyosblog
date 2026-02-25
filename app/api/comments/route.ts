@@ -1,25 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createSupabaseFromRequest } from '@/lib/supabase-server';
 import {
   getCommentsByPostId,
   createComment,
   deleteComment,
 } from '@/lib/comments';
-
-function createSupabaseFromRequest(request: NextRequest) {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll() {},
-      },
-    }
-  );
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

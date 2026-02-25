@@ -6,6 +6,7 @@ export const CATEGORIES = [
   { id: 'cooking', name: '요리' },
   { id: 'study', name: '공부' },
   { id: 'exercise', name: '운동' },
+  { id: 'invest', name: '투자' },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]['id'];

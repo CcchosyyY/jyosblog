@@ -122,7 +122,7 @@ export default function SearchModal() {
             placeholder="검색..."
             className="flex-1 bg-transparent text-sm text-foreground placeholder-muted outline-none"
           />
-          <kbd className="px-1.5 py-0.5 text-[10px] font-medium text-muted bg-surface rounded border border-card-border">
+          <kbd className="px-1.5 py-0.5 text-caption-xs font-medium text-muted bg-surface rounded border border-card-border">
             ESC
           </kbd>
         </div>
@@ -142,7 +142,7 @@ export default function SearchModal() {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-medium text-primary">
+                    <span className="text-caption-xs font-medium text-primary">
                       {post.category}
                     </span>
                     <h4 className="text-sm font-medium text-foreground truncate">

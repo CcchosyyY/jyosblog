@@ -116,7 +116,7 @@ export default function AdminDashboard() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-[28px] font-bold text-foreground">
+        <h1 className="text-heading-lg font-bold text-foreground">
           Dashboard
         </h1>
         <div className="flex items-center gap-3">
@@ -145,19 +145,19 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-4 gap-4 mb-8">
         <div className="bg-card border border-card-border p-5 rounded-xl">
           <p className="text-xs font-medium text-muted">Total Posts</p>
-          <p className="text-[28px] font-bold text-foreground mt-1">{posts.length}</p>
+          <p className="text-heading-lg font-bold text-foreground mt-1">{posts.length}</p>
         </div>
         <div className="bg-card border border-card-border p-5 rounded-xl">
           <p className="text-xs font-medium text-muted">Published</p>
-          <p className="text-[28px] font-bold text-foreground mt-1">{publishedCount}</p>
+          <p className="text-heading-lg font-bold text-foreground mt-1">{publishedCount}</p>
         </div>
         <div className="bg-card border border-card-border p-5 rounded-xl">
           <p className="text-xs font-medium text-muted">Drafts</p>
-          <p className="text-[28px] font-bold text-foreground mt-1">{draftCount}</p>
+          <p className="text-heading-lg font-bold text-foreground mt-1">{draftCount}</p>
         </div>
         <div className="bg-card border border-card-border p-5 rounded-xl">
           <p className="text-xs font-medium text-muted">Categories</p>
-          <p className="text-[28px] font-bold text-foreground mt-1">{categoryCount}</p>
+          <p className="text-heading-lg font-bold text-foreground mt-1">{categoryCount}</p>
         </div>
       </div>
 
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                         {post.status === 'published' ? 'Published' : 'Draft'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[13px] text-muted">
+                    <td className="px-4 py-3 text-body-sm text-muted">
                       {new Date(post.updated_at).toLocaleDateString('ko-KR')}
                     </td>
                     <td className="px-4 py-3">

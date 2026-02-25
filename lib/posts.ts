@@ -187,6 +187,30 @@ export async function getPostCountByCategory(): Promise<Record<string, number>> 
   return counts;
 }
 
+export async function getPostsByProject(
+  projectId: string
+): Promise<PostMeta[]> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('status', 'published')
+      .eq('project_id', projectId)
+      .order('published_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching posts by project:', error);
+      return [];
+    }
+
+    return (data || []).map(mapPostToMeta);
+  } catch (e) {
+    console.error('Supabase not configured:', e);
+    return [];
+  }
+}
+
 export async function getRelatedPosts(
   postId: string,
   category: string,
@@ -234,6 +258,7 @@ export interface CreatePostInput {
   status?: 'draft' | 'published';
   suggested_category?: string;
   thumbnail?: string;
+  project_id?: string;
 }
 
 export interface UpdatePostInput extends Partial<CreatePostInput> {

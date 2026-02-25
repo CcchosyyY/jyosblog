@@ -31,10 +31,10 @@ export default function BlogSidebar({ postCounts }: BlogSidebarProps) {
             J
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold text-foreground">
+            <h3 className="text-body-lg font-semibold text-foreground">
               Jyo
             </h3>
-            <p className="text-[13px] text-subtle">
+            <p className="text-body-sm text-subtle">
               Developer &amp; Blogger
             </p>
           </div>

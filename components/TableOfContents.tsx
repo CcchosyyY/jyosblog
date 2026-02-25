@@ -58,10 +58,10 @@ export default function TableOfContents() {
 
   return (
     <nav className="hidden xl:block fixed right-8 top-32 w-64 max-h-[calc(100vh-200px)] overflow-y-auto">
-      <h4 className="font-semibold text-foreground mb-4">
-        목차
+      <h4 className="text-caption font-semibold text-muted uppercase tracking-wider mb-4">
+        On this page
       </h4>
-      <ul className="space-y-2 text-sm">
+      <ul className="border-l border-card-border">
         {headings.map((heading) => (
           <li
             key={heading.id}
@@ -69,10 +69,10 @@ export default function TableOfContents() {
           >
             <a
               href={`#${heading.id}`}
-              className={`block py-1 transition-colors ${
+              className={`block py-1.5 pl-3 -ml-px text-body-sm transition-colors ${
                 activeId === heading.id
-                  ? 'text-primary font-medium'
-                  : 'text-muted hover:text-foreground'
+                  ? 'text-primary font-medium border-l-2 border-primary'
+                  : 'text-muted hover:text-foreground border-l-2 border-transparent'
               }`}
             >
               {heading.text}

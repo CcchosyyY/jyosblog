@@ -52,7 +52,23 @@ export interface Post {
   status: 'draft' | 'published';
   suggested_category: string | null;
   thumbnail: string | null;
+  project_id: string | null;
   created_at: string;
   updated_at: string;
   published_at: string | null;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string | null;
+  long_description: string | null;
+  tags: string[];
+  status: 'active' | 'completed' | 'archived';
+  github_url: string | null;
+  live_url: string | null;
+  gradient: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
 }

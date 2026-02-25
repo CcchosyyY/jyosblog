@@ -269,7 +269,7 @@ export default function PostEditor({
     <div className="bg-card border border-card-border rounded-xl overflow-hidden">
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 bg-primary/10 border-b border-primary/30 text-primary px-6 py-3 text-[13px] font-medium">
+        <div className="flex items-center gap-2 bg-primary/10 border-b border-primary/30 text-primary px-6 py-3 text-body-sm font-medium">
           <svg
             className="w-4 h-4 shrink-0"
             fill="currentColor"
@@ -322,7 +322,7 @@ export default function PostEditor({
                   <svg className="w-7 h-7 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
                   </svg>
-                  <span className="text-[11px] text-muted">썸네일</span>
+                  <span className="text-caption-sm text-muted">썸네일</span>
                 </>
               )}
               <input
@@ -339,14 +339,14 @@ export default function PostEditor({
         {/* Title + Meta */}
         <div className="flex-1 min-w-0 flex flex-col h-[180px]">
           {/* Meta fields (top) */}
-          <div className="flex flex-col gap-1.5 px-1 pb-3 border-b border-card-border text-[12px]">
+          <div className="flex flex-col gap-1.5 px-1 pb-3 border-b border-card-border text-caption">
             <div className="flex items-center">
               <span className="shrink-0 w-14 text-muted font-medium">슬러그</span>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="flex-1 min-w-0 px-2 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-[12px] focus:outline-none focus:ring-1 focus:ring-primary"
+                className="flex-1 min-w-0 px-2 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-caption focus:outline-none focus:ring-1 focus:ring-primary"
                 placeholder="url-friendly-slug"
               />
             </div>
@@ -357,7 +357,7 @@ export default function PostEditor({
                   data-category-select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-16 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground text-[12px] focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-16 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground text-caption focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.id} value={cat.id}>
@@ -372,7 +372,7 @@ export default function PostEditor({
                       setCategory(suggestedCategory);
                       setSuggestedCategory(null);
                     }}
-                    className="ml-1 text-[11px] text-link hover:text-primary transition-colors whitespace-nowrap"
+                    className="ml-1 text-caption-sm text-link hover:text-primary transition-colors whitespace-nowrap"
                   >
                     추천: {getCategoryName(suggestedCategory)}
                   </button>
@@ -384,7 +384,7 @@ export default function PostEditor({
                   type="text"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="w-24 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-[12px] focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-24 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-caption focus:outline-none focus:ring-1 focus:ring-primary"
                   placeholder="태그1, 태그2"
                 />
               </div>
@@ -404,7 +404,7 @@ export default function PostEditor({
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full mt-2 text-[13px] text-subtle bg-transparent placeholder-muted focus:outline-none"
+              className="w-full mt-2 text-body-sm text-subtle bg-transparent placeholder-muted focus:outline-none"
               placeholder="글에 대한 짧은 설명을 입력하세요"
             />
           </div>

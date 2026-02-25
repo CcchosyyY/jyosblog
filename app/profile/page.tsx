@@ -94,6 +94,7 @@ export default function ProfilePage() {
             onChange={(e) => setNickname(e.target.value)}
             className="w-full px-3 py-2 bg-surface border border-card-border rounded-lg text-sm text-foreground placeholder-muted focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="닉네임을 입력하세요"
+            maxLength={50}
           />
         </div>
         <div>
@@ -106,6 +107,7 @@ export default function ProfilePage() {
             rows={3}
             className="w-full resize-none px-3 py-2 bg-surface border border-card-border rounded-lg text-sm text-foreground placeholder-muted focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="자기소개를 입력하세요"
+            maxLength={500}
           />
         </div>
         <div className="flex items-center gap-3">

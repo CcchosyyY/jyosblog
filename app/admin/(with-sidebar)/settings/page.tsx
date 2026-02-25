@@ -149,7 +149,7 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-6 py-10">
-      <h1 className="text-[28px] font-bold text-foreground mb-8">Settings</h1>
+      <h1 className="text-heading-lg font-bold text-foreground mb-8">Settings</h1>
 
       {/* Blog Info Section */}
       <section className="bg-card border border-card-border rounded-xl p-6 mb-8">

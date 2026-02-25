@@ -82,17 +82,17 @@ function prefixLine(
 const TOOLBAR_GROUPS: (ToolbarAction | 'divider')[][] = [
   [
     {
-      icon: <span className="text-[11px] font-bold">H1</span>,
+      icon: <span className="text-caption-sm font-bold">H1</span>,
       title: '제목 1',
       action: (ta, c, sc) => prefixLine(ta, c, sc, '# '),
     },
     {
-      icon: <span className="text-[11px] font-bold">H2</span>,
+      icon: <span className="text-caption-sm font-bold">H2</span>,
       title: '제목 2',
       action: (ta, c, sc) => prefixLine(ta, c, sc, '## '),
     },
     {
-      icon: <span className="text-[11px] font-bold">H3</span>,
+      icon: <span className="text-caption-sm font-bold">H3</span>,
       title: '제목 3',
       action: (ta, c, sc) => prefixLine(ta, c, sc, '### '),
     },

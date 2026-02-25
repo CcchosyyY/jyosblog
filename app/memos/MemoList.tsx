@@ -198,7 +198,7 @@ export default function MemoList({ initialMemos }: MemoListProps) {
             >
               {/* Title */}
               {memo.title && (
-                <h3 className="text-[15px] font-semibold text-foreground mb-2">
+                <h3 className="text-body-lg font-semibold text-foreground mb-2">
                   {memo.title}
                 </h3>
               )}

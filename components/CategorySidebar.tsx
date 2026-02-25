@@ -30,14 +30,14 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
           <li>
             <Link
               href="/"
-              className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-[15px] font-medium transition-colors ${
+              className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-body-lg font-medium transition-colors ${
                 isAllActive()
-                  ? 'bg-[#B3001B1A] dark:bg-[#B3001B33] text-primary dark:text-[#FF1A1A] font-semibold'
+                  ? 'bg-primary/10 text-primary font-semibold'
                   : 'text-subtle hover:bg-surface hover:text-foreground'
               }`}
             >
               <span>전체</span>
-              <span className={`text-xs ${isAllActive() ? 'text-primary dark:text-[#FF1A1A]' : 'text-muted'}`}>
+              <span className={`text-xs ${isAllActive() ? 'text-primary' : 'text-muted'}`}>
                 {Object.values(postCounts).reduce((a, b) => a + b, 0)}
               </span>
             </Link>
@@ -46,14 +46,14 @@ export default function CategorySidebar({ postCounts }: CategorySidebarProps) {
             <li key={category.id}>
               <Link
                 href={`/blog/category/${category.id}`}
-                className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-[15px] font-medium transition-colors ${
+                className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-body-lg font-medium transition-colors ${
                   isActive(category.id)
-                    ? 'bg-[#B3001B1A] dark:bg-[#B3001B33] text-primary dark:text-[#FF1A1A] font-semibold'
+                    ? 'bg-primary/10 text-primary font-semibold'
                     : 'text-subtle hover:bg-surface hover:text-foreground'
                 }`}
               >
                 <span>{category.name}</span>
-                <span className={`text-xs ${isActive(category.id) ? 'text-primary dark:text-[#FF1A1A]' : 'text-muted'}`}>
+                <span className={`text-xs ${isActive(category.id) ? 'text-primary' : 'text-muted'}`}>
                   {postCounts[category.id] || 0}
                 </span>
               </Link>

@@ -38,7 +38,9 @@ app/
 │       ├── category/[category]/  # 카테고리별 목록
 │       └── tag/[tag]/            # 태그별 목록
 ├── about/page.tsx                # 소개 페이지
-├── projects/page.tsx             # 프로젝트 페이지
+├── projects/
+│   ├── page.tsx                  # 프로젝트 목록 (DB 기반 + 필터)
+│   └── [slug]/page.tsx           # 프로젝트 상세 + devlog 타임라인
 ├── memos/                        # 메모 페이지
 │   ├── page.tsx
 │   └── MemoList.tsx
@@ -93,14 +95,19 @@ components/
 ├── ViewCounter.tsx               # 조회수 카운터
 ├── ProfileCard.tsx               # 프로필 카드
 ├── QuickMemoWidget.tsx           # 빠른 메모 위젯
+├── StatusBadge.tsx               # 프로젝트 상태 배지
+├── ProjectCard.tsx               # 프로젝트 카드 (Link 래핑)
+├── ProjectFilter.tsx             # 프로젝트 상태 필터 탭
+├── DevlogTimeline.tsx            # Linear 스타일 수직 타임라인
 ├── ThemeProvider.tsx             # next-themes Provider
 └── ThemeToggle.tsx               # 다크모드 토글
 
 lib/
-├── supabase.ts                   # Supabase 클라이언트 싱글톤 + Post 타입
+├── supabase.ts                   # Supabase 클라이언트 싱글톤 + Post/Project 타입
 ├── supabase-browser.ts           # 브라우저용 Supabase 클라이언트
 ├── auth.ts                       # 세션 생성/검증/삭제 (isAuthenticated)
-├── posts.ts                      # 포스트 CRUD
+├── posts.ts                      # 포스트 CRUD + getPostsByProject
+├── projects.ts                   # 프로젝트 CRUD (getProjects, getProjectBySlug)
 ├── categories.ts                 # 카테고리 CRUD + CATEGORIES 배열
 ├── comments.ts                   # 댓글 CRUD
 ├── likes.ts                      # 좋아요 CRUD
@@ -159,7 +166,16 @@ middleware.ts                     # /admin/* 경로 세션 검증 + Supabase Aut
 ```
 id: uuid (PK), title, content (MDX), slug (unique), description?, category,
 tags[], status ('draft'|'published'), suggested_category?, thumbnail?,
+project_id? (FK → projects.id),
 created_at, updated_at, published_at?
+```
+
+### Projects
+```
+id: text (PK, slug 겸용), title, description?, long_description?,
+tags[], status ('active'|'completed'|'archived'),
+github_url?, live_url?, gradient?, sort_order,
+created_at, updated_at
 ```
 
 ### Categories
@@ -202,6 +218,11 @@ token: string (PK), created_at, expires_at (7일)
 | `verify-implementation` | 모든 verify 스킬 순차 실행 → 통합 검증 보고서 생성 |
 | `uitest` | Pencil 디자인 vs 실제 UI 비교 & 자동 수정 (Main.pen + Puppeteer) |
 | `verify-backend` | 백엔드 보안 패턴, 인증 플로우, Supabase 에러 처리 검증 |
+
+## Workflow
+
+- **작업 시작 시 MCP 확인 필수**: 모든 작업을 시작하기 전에 먼저 사용 가능한 MCP 서버/도구를 확인(`ToolSearch` 또는 `ListMcpResourcesTool`)하고, 해당 작업에 활용할 수 있는 MCP가 있는지 판단한 후 작업을 진행할 것
+- 활용 가능한 MCP 서버: Pencil(디자인), Chrome DevTools/Puppeteer(UI 테스트), Figma(디자인 연동), Supabase(DB), Vercel(배포), GitHub(PR/이슈), context7(문서 조회), memory(지식 관리) 등
 
 ## Caveats
 

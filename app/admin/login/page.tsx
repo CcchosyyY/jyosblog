@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
 
         {/* Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <h2 className="text-[30px] font-bold text-white tracking-tight">
+          <h2 className="text-heading-xl font-bold text-white tracking-tight">
             Admin Login
           </h2>
           <p className="text-sm text-[#FFFFFF59]">
@@ -109,7 +109,7 @@ export default function AdminLoginPage() {
 
         {/* Error */}
         {error && (
-          <div className="w-full flex items-center gap-2 bg-[#B3001B15] border border-[#B3001B33] text-[#FF6B7A] p-3 rounded-xl text-[13px] font-medium animate-login-card">
+          <div className="w-full flex items-center gap-2 bg-[#B3001B15] border border-[#B3001B33] text-[#FF6B7A] p-3 rounded-xl text-body-sm font-medium animate-login-card">
             <svg
               className="w-4 h-4 shrink-0"
               fill="currentColor"

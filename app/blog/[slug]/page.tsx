@@ -2,7 +2,7 @@ import { getPostBySlug, getAllPosts, getRelatedPosts } from '@/lib/posts';
 import { getCategoryName } from '@/lib/categories';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 import TableOfContents from '@/components/TableOfContents';
 import LikeButton from '@/components/LikeButton';
 import ViewCounter from '@/components/ViewCounter';
@@ -43,14 +43,14 @@ export default async function PostPage({ params }: Props) {
   );
 
   return (
-    <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <article className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <TableOfContents />
 
       <div className="flex flex-col gap-8">
         {/* Back Link */}
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-subtle hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-body font-medium text-subtle hover:text-foreground transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 19l-7-7 7-7" />
@@ -59,18 +59,28 @@ export default async function PostPage({ params }: Props) {
         </Link>
 
         {/* Title Section */}
-        <header className="flex flex-col gap-3">
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
+        <header className="flex flex-col gap-4">
+          <h1 className="text-heading-xl sm:text-4xl font-bold text-foreground">
             {post.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-3">
-            <time className="text-xs text-muted">{post.date}</time>
-            {post.tags.length > 0 && (
-              <span className="px-2.5 py-1 text-xs font-medium bg-secondary/20 text-secondary rounded">
-                {post.tags[0]}
-              </span>
-            )}
+          {post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {post.tags.map((tag) => (
+                <Link
+                  key={tag}
+                  href={`/blog/tag/${tag}`}
+                  className="px-2.5 py-0.5 text-caption font-medium bg-secondary/20 text-secondary rounded hover:bg-secondary/30 transition-colors"
+                >
+                  {tag}
+                </Link>
+              ))}
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-1.5 text-caption text-muted">
+            <time>{post.date}</time>
+            <span>&middot;</span>
             <ViewCounter postId={post.id} />
+            <span>&middot;</span>
             <LikeButton postId={post.id} />
           </div>
         </header>
@@ -80,60 +90,40 @@ export default async function PostPage({ params }: Props) {
 
         {/* Content */}
         <div className="prose prose-neutral dark:prose-invert max-w-none">
-          <MDXRemote source={post.content} />
+          <MarkdownRenderer content={post.content} />
         </div>
 
         {/* Divider */}
         <div className="h-px bg-card-border" />
 
-        {/* Post Tags */}
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/blog/tag/${tag}`}
-                className="px-2.5 py-1 text-xs font-medium bg-secondary/20 text-secondary rounded hover:bg-secondary/30 transition-colors"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
-        )}
-
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-foreground">
+          <section className="flex flex-col gap-3">
+            <h2 className="text-heading-sm text-foreground">
               Related Posts
             </h2>
-            <div className="grid gap-3">
+            <div className="divide-y divide-card-border">
               {relatedPosts.map((related) => (
                 <Link
                   key={related.id}
                   href={`/blog/${related.slug}`}
-                  className="flex items-start gap-4 p-4 rounded-xl border border-card-border bg-card hover:bg-surface transition-colors group"
+                  className="flex items-center justify-between py-3 group hover:bg-surface/60 -mx-2 px-2 rounded transition-colors"
                 >
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                    <h3 className="text-body font-medium text-foreground group-hover:text-primary transition-colors truncate">
                       {related.title}
                     </h3>
-                    {related.description && (
-                      <p className="mt-1 text-xs text-muted line-clamp-1">
-                        {related.description}
-                      </p>
-                    )}
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-[11px] text-muted">
+                    <div className="mt-0.5 flex items-center gap-2">
+                      <span className="text-caption text-muted">
                         {getCategoryName(related.category)}
                       </span>
-                      <span className="text-[11px] text-muted">
+                      <span className="text-caption text-muted">
                         {related.readingTime}
                       </span>
                     </div>
                   </div>
                   <svg
-                    className="w-4 h-4 text-muted group-hover:text-primary transition-colors shrink-0 mt-0.5"
+                    className="w-4 h-4 text-muted group-hover:text-primary transition-colors shrink-0 ml-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

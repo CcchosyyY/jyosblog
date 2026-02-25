@@ -12,7 +12,7 @@ export default async function BlogLayout({
     <div className="flex">
       <BlogSidebar postCounts={postCounts} />
       <div className="flex-1 min-w-0">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 py-10">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {children}
         </div>
       </div>

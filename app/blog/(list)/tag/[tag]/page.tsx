@@ -35,7 +35,7 @@ export default async function TagPage({ params }: Props) {
     <div className="flex flex-col gap-6">
       {/* Tag Header */}
       <div>
-        <h2 className="text-2xl font-bold text-foreground mb-1">
+        <h2 className="text-2xl font-bold text-foreground mb-0.5">
           #{decodedTag}
         </h2>
         <p className="text-subtle text-sm">
@@ -61,7 +61,7 @@ export default async function TagPage({ params }: Props) {
       </div>
 
       {/* Posts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {posts.map((post) => (
           <PostCard
             key={post.slug}

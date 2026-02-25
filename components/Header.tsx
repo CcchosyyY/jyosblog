@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import Avatar from '@/components/Avatar';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
@@ -112,8 +112,8 @@ export default function Header() {
                 href={link.href}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive(link.href)
-                    ? 'bg-primary/10 dark:bg-primary/20 text-primary'
-                    : 'text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary'
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-subtle hover:bg-primary/15 hover:text-primary'
                 }`}
               >
                 {link.label}
@@ -145,7 +145,7 @@ export default function Header() {
               <span className="text-xs text-muted flex-1 text-left">
                 Search...
               </span>
-              <kbd className="text-[10px] font-medium text-muted bg-surface px-1 py-0.5 rounded border border-card-border">
+              <kbd className="text-caption-xs font-medium text-muted bg-surface px-1 py-0.5 rounded border border-card-border">
                 Ctrl+K
               </kbd>
             </button>
@@ -157,19 +157,7 @@ export default function Header() {
                   className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
                   aria-label="Dashboard"
                 >
-                  {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt={displayName}
-                      width={28}
-                      height={28}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                      {displayName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <Avatar src={avatarUrl} name={displayName} size="md" />
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -251,8 +239,8 @@ export default function Header() {
                   href={link.href}
                   className={`px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     isActive(link.href)
-                      ? 'bg-primary/10 dark:bg-primary/20 text-primary'
-                      : 'text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary'
+                      ? 'bg-primary/15 text-primary'
+                      : 'text-subtle hover:bg-primary/15 hover:text-primary'
                   }`}
                 >
                   {link.label}
@@ -265,7 +253,7 @@ export default function Header() {
                   setIsMenuOpen(false);
                   setTimeout(openSearch, 100);
                 }}
-                className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/15 hover:text-primary rounded-lg transition-colors"
               >
                 <svg
                   className="w-4 h-4"
@@ -293,24 +281,12 @@ export default function Header() {
                     href={isAdmin ? '/admin' : '/dashboard'}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors"
                   >
-                    {avatarUrl ? (
-                      <Image
-                        src={avatarUrl}
-                        alt={displayName}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
-                        {displayName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+                    <Avatar src={avatarUrl} name={displayName} size="sm" />
                     <span className="text-sm font-medium text-foreground">
                       {displayName}
                     </span>
                     {isAdmin && (
-                      <span className="text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                      <span className="text-caption-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                         Admin
                       </span>
                     )}
@@ -328,7 +304,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/15 hover:text-primary rounded-lg transition-colors"
                 >
                   <svg
                     className="w-4 h-4"
