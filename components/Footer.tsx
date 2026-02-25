@@ -19,7 +19,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="mailto:contact@example.com"
+              href="mailto:chosangyun.dev@gmail.com"
               className="text-muted hover:text-foreground transition-colors"
               aria-label="Email"
             >

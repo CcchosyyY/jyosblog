@@ -34,7 +34,6 @@ export default function Header() {
       setUser(session?.user ?? null);
     });
 
-    // Check is_admin cookie
     const isAdminCookie = document.cookie
       .split('; ')
       .find((c) => c.startsWith('is_admin='));
@@ -53,6 +52,10 @@ export default function Header() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/' || pathname.startsWith('/blog');
     return pathname === href;
@@ -60,13 +63,9 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      // Sign out from browser client first (clears in-memory session)
       const supabase = getSupabaseBrowser();
       await supabase.auth.signOut();
-
-      // Sign out from server (clears DB session + cookies)
       await fetch('/api/auth/logout', { method: 'POST' });
-
       setUser(null);
       setIsAdmin(false);
       router.push('/');
@@ -74,6 +73,16 @@ export default function Header() {
     } catch {
       // Silently fail
     }
+  };
+
+  const openSearch = () => {
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'k',
+        metaKey: true,
+        bubbles: true,
+      })
+    );
   };
 
   const avatarUrl = user?.user_metadata?.avatar_url;
@@ -86,7 +95,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-card-border">
       <nav className="max-w-6xl mx-auto px-6">
-        <div className="flex justify-between items-center h-14">
+        <div className="relative flex items-center justify-between h-14">
           {/* Logo */}
           <Link
             href="/"
@@ -95,8 +104,8 @@ export default function Header() {
             Jyo&apos;s Blog
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation — absolute center */}
+          <div className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -112,24 +121,16 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Actions */}
-          <div className="hidden md:flex items-center gap-1">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-1.5">
             <ThemeToggle />
             <button
-              onClick={() => {
-                document.dispatchEvent(
-                  new KeyboardEvent('keydown', {
-                    key: 'k',
-                    metaKey: true,
-                    bubbles: true,
-                  })
-                );
-              }}
-              className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg border border-card-border hover:bg-surface transition-colors"
+              onClick={openSearch}
+              className="flex items-center gap-2 px-3 h-9 w-44 rounded-lg border border-card-border hover:bg-surface transition-colors"
               aria-label="Search"
             >
               <svg
-                className="w-4 h-4 text-muted"
+                className="w-4 h-4 text-muted shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -141,12 +142,14 @@ export default function Header() {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <kbd className="hidden sm:inline text-[10px] font-medium text-muted bg-surface px-1 py-0.5 rounded border border-card-border">
+              <span className="text-xs text-muted flex-1 text-left">
+                Search...
+              </span>
+              <kbd className="text-[10px] font-medium text-muted bg-surface px-1 py-0.5 rounded border border-card-border">
                 Ctrl+K
               </kbd>
             </button>
 
-            {/* User area */}
             {user ? (
               <div className="flex items-center gap-1">
                 <Link
@@ -170,22 +173,23 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
+                  className="flex items-center gap-1.5 px-2 h-9 rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
                   aria-label="Logout"
                 >
-                  <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
+                  <span className="text-xs font-medium">Logout</span>
                 </button>
               </div>
             ) : (
               <Link
                 href="/login"
-                className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface transition-colors"
+                className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
                 aria-label="Login"
               >
                 <svg
-                  className="w-5 h-5 text-subtle"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -197,45 +201,14 @@ export default function Header() {
                     d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"
                   />
                 </svg>
+                <span className="text-xs font-medium">Login</span>
               </Link>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile: ThemeToggle + Hamburger only */}
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
-            {user ? (
-              <>
-                <Link
-                  href={isAdmin ? '/admin' : '/dashboard'}
-                  className="p-2 rounded-lg hover:bg-surface transition-colors"
-                  aria-label="Dashboard"
-                >
-                  {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt={displayName}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
-                      {displayName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
-                  aria-label="Logout"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                </button>
-              </>
-            ) : null}
             <button
               className="p-2 rounded-lg hover:bg-surface transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -271,26 +244,105 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-card-border">
             <div className="flex flex-col gap-1">
+              {/* Nav Links */}
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                     isActive(link.href)
                       ? 'bg-primary/10 dark:bg-primary/20 text-primary'
                       : 'text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              {!user && (
+
+              {/* Search */}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setTimeout(openSearch, 100);
+                }}
+                className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                Search
+              </button>
+
+              {/* Divider */}
+              <div className="h-px bg-card-border my-2" />
+
+              {/* User section */}
+              {user ? (
+                <>
+                  <Link
+                    href={isAdmin ? '/admin' : '/dashboard'}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface transition-colors"
+                  >
+                    {avatarUrl ? (
+                      <Image
+                        src={avatarUrl}
+                        alt={displayName}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+                        {displayName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-foreground">
+                      {displayName}
+                    </span>
+                    {isAdmin && (
+                      <span className="text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                        Admin
+                      </span>
+                    )}
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-subtle hover:text-foreground hover:bg-surface rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                  </button>
+                </>
+              ) : (
                 <Link
                   href="/login"
-                  className="px-3 py-2 text-sm font-medium text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
                 >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"
+                    />
+                  </svg>
                   Login
                 </Link>
               )}

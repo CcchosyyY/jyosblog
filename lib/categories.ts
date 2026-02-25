@@ -1,4 +1,4 @@
-import { getSupabase } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 
 export const CATEGORIES = [
   { id: 'daily', name: '일상' },
@@ -24,7 +24,7 @@ export interface Category {
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from('categories')
@@ -49,7 +49,7 @@ export async function createCategory(
   sortOrder?: number
 ): Promise<Category | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const insertData: Record<string, unknown> = { id, name };
     if (sortOrder !== undefined) {
@@ -79,7 +79,7 @@ export async function updateCategory(
   name: string
 ): Promise<Category | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from('categories')
@@ -102,7 +102,7 @@ export async function updateCategory(
 
 export async function deleteCategory(id: string): Promise<boolean> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { error } = await supabase
       .from('categories')

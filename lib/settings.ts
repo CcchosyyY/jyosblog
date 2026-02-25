@@ -1,4 +1,4 @@
-import { getSupabase } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 
 export interface BlogSettings {
   id: string;
@@ -11,7 +11,7 @@ export interface BlogSettings {
 
 export async function getSettings(): Promise<BlogSettings | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from('blog_settings')
@@ -35,7 +35,7 @@ export async function updateSettings(
   settings: Partial<Omit<BlogSettings, 'id' | 'updated_at'>>
 ): Promise<BlogSettings | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data: existing, error: fetchError } = await supabase
       .from('blog_settings')

@@ -1,4 +1,5 @@
-import { getPostBySlug, getAllPosts } from '@/lib/posts';
+import { getPostBySlug, getAllPosts, getRelatedPosts } from '@/lib/posts';
+import { getCategoryName } from '@/lib/categories';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
@@ -34,6 +35,12 @@ export default async function PostPage({ params }: Props) {
   if (!post) {
     notFound();
   }
+
+  const relatedPosts = await getRelatedPosts(
+    post.id,
+    post.category,
+    post.tags
+  );
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -92,6 +99,56 @@ export default async function PostPage({ params }: Props) {
               </Link>
             ))}
           </div>
+        )}
+
+        {/* Related Posts */}
+        {relatedPosts.length > 0 && (
+          <section className="flex flex-col gap-4">
+            <h2 className="text-lg font-bold text-foreground">
+              Related Posts
+            </h2>
+            <div className="grid gap-3">
+              {relatedPosts.map((related) => (
+                <Link
+                  key={related.id}
+                  href={`/blog/${related.slug}`}
+                  className="flex items-start gap-4 p-4 rounded-xl border border-card-border bg-card hover:bg-surface transition-colors group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                      {related.title}
+                    </h3>
+                    {related.description && (
+                      <p className="mt-1 text-xs text-muted line-clamp-1">
+                        {related.description}
+                      </p>
+                    )}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[11px] text-muted">
+                        {getCategoryName(related.category)}
+                      </span>
+                      <span className="text-[11px] text-muted">
+                        {related.readingTime}
+                      </span>
+                    </div>
+                  </div>
+                  <svg
+                    className="w-4 h-4 text-muted group-hover:text-primary transition-colors shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Comments */}

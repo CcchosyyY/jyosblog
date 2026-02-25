@@ -1,4 +1,4 @@
-import { getSupabase, Post } from './supabase';
+import { getSupabase, getSupabaseAdmin, Post } from './supabase';
 import { CATEGORIES, getCategoryName } from './categories';
 
 export { CATEGORIES, getCategoryName };
@@ -187,6 +187,41 @@ export async function getPostCountByCategory(): Promise<Record<string, number>> 
   return counts;
 }
 
+export async function getRelatedPosts(
+  postId: string,
+  category: string,
+  tags: string[],
+  limit = 3
+): Promise<PostMeta[]> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('status', 'published')
+      .eq('category', category)
+      .neq('id', postId)
+      .order('published_at', { ascending: false })
+      .limit(limit * 2);
+
+    if (error || !data) return [];
+
+    const scored = data.map((post) => {
+      const commonTags = (post.tags || []).filter((t: string) =>
+        tags.includes(t)
+      ).length;
+      return { post, score: commonTags };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+
+    return scored.slice(0, limit).map((s) => mapPostToMeta(s.post));
+  } catch (e) {
+    console.error('Error fetching related posts:', e);
+    return [];
+  }
+}
+
 // Admin functions
 
 export interface CreatePostInput {
@@ -207,7 +242,7 @@ export interface UpdatePostInput extends Partial<CreatePostInput> {
 
 export async function createPost(input: CreatePostInput): Promise<Post | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('posts')
       .insert({
@@ -231,7 +266,7 @@ export async function createPost(input: CreatePostInput): Promise<Post | null> {
 
 export async function updatePost(input: UpdatePostInput): Promise<Post | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { id, ...updateData } = input;
 
     // If status is changing to published, set published_at
@@ -271,7 +306,7 @@ export async function updatePost(input: UpdatePostInput): Promise<Post | null> {
 
 export async function deletePost(id: string): Promise<boolean> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -291,7 +326,7 @@ export async function deletePost(id: string): Promise<boolean> {
 
 export async function getDrafts(): Promise<Post[]> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -312,7 +347,7 @@ export async function getDrafts(): Promise<Post[]> {
 
 export async function getAllPostsAdmin(): Promise<Post[]> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -332,7 +367,7 @@ export async function getAllPostsAdmin(): Promise<Post[]> {
 
 export async function getPostById(id: string): Promise<Post | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('posts')
       .select('*')

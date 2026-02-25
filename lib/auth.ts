@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getSupabase } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 import crypto from 'crypto';
 
 const SESSION_COOKIE = 'admin_session';
@@ -7,7 +7,7 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 
 export async function createSession(): Promise<string> {
   const token = crypto.randomUUID();
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
   const expiresAt = new Date(
     Date.now() + SESSION_MAX_AGE * 1000
   ).toISOString();
@@ -40,7 +40,7 @@ export async function deleteSession(): Promise<void> {
   const token = cookieStore.get(SESSION_COOKIE)?.value;
 
   if (token) {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
     await supabase
       .from('admin_sessions')
       .delete()
@@ -58,7 +58,7 @@ export async function isAuthenticated(): Promise<boolean> {
     return false;
   }
 
-  const supabase = getSupabase();
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from('admin_sessions')
     .select('token')

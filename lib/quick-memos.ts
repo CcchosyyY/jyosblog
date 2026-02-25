@@ -1,4 +1,4 @@
-import { getSupabase } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 
 export interface QuickMemo {
   id: string;
@@ -27,7 +27,7 @@ export async function getQuickMemos(
   limit: number = 10
 ): Promise<QuickMemo[]> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from('quick_memos')
@@ -52,7 +52,7 @@ export async function getQuickMemosByFilter(
   limit: number = 50
 ): Promise<QuickMemo[]> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     let query = supabase
       .from('quick_memos')
@@ -88,7 +88,7 @@ export async function createQuickMemo(
   input: CreateQuickMemoInput
 ): Promise<QuickMemo | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const insertData: Record<string, unknown> = {
       content: input.content,
@@ -120,7 +120,7 @@ export async function updateQuickMemo(
   fields: Partial<Pick<QuickMemo, 'content' | 'title' | 'category' | 'tags' | 'is_processed'>>
 ): Promise<QuickMemo | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from('quick_memos')
@@ -145,7 +145,7 @@ export async function markMemosAsProcessed(
   ids: string[]
 ): Promise<boolean> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { error } = await supabase
       .from('quick_memos')
@@ -166,7 +166,7 @@ export async function markMemosAsProcessed(
 
 export async function deleteQuickMemo(id: string): Promise<boolean> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabaseAdmin();
 
     const { error } = await supabase
       .from('quick_memos')
