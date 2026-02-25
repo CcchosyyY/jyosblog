@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import TableOfContents from '@/components/TableOfContents';
+import ShareButtons from '@/components/ShareButtons';
 import LikeButton from '@/components/LikeButton';
 import ViewCounter from '@/components/ViewCounter';
 import CommentSection from '@/components/CommentSection';
@@ -43,9 +44,17 @@ export default async function PostPage({ params }: Props) {
   );
 
   return (
-    <article className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Left: Share Buttons */}
+      <aside className="hidden xl:block fixed left-[max(2rem,calc(50%-38rem))] top-40">
+        <ShareButtons title={post.title} slug={post.slug} />
+      </aside>
+
+      {/* Right: Table of Contents */}
       <TableOfContents />
 
+      {/* Center: Article */}
+      <article className="max-w-2xl mx-auto xl:mx-0 xl:ml-40 xl:mr-72">
       <div className="flex flex-col gap-8">
         {/* Back Link */}
         <Link
@@ -77,7 +86,18 @@ export default async function PostPage({ params }: Props) {
             </div>
           )}
           <div className="flex flex-wrap items-center gap-1.5 text-caption text-muted">
-            <time>{post.date}</time>
+            <time>
+              {new Date(post.date).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}{' '}
+              {new Date(post.date).toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })}
+            </time>
             <span>&middot;</span>
             <ViewCounter postId={post.id} />
             <span>&middot;</span>
@@ -99,7 +119,7 @@ export default async function PostPage({ params }: Props) {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="flex flex-col gap-3">
-            <h2 className="text-heading-sm text-foreground">
+            <h2 id="related-posts" data-toc className="text-heading-sm text-foreground">
               Related Posts
             </h2>
             <div className="divide-y divide-card-border">
@@ -144,6 +164,7 @@ export default async function PostPage({ params }: Props) {
         {/* Comments */}
         <CommentSection postId={post.id} />
       </div>
-    </article>
+      </article>
+    </div>
   );
 }

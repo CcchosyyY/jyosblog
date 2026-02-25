@@ -1,6 +1,6 @@
 ---
 name: 작업완료
-description: 세션 마무리 자동화 — git commit/push, DID.md/TODO.md 업데이트, 개발일지 블로그 발행. 작업 종료 시 사용.
+description: 세션 마무리 자동화 — git commit/push, TODO→DID 이동, DID 기반 개발일지 발행. 작업 종료 시 사용.
 user-invocable: true
 ---
 
@@ -11,9 +11,8 @@ user-invocable: true
 세션 종료 시 아래 작업을 순차 실행하여 작업 기록을 자동화:
 
 1. **Git commit + push** — 변경사항 커밋 및 원격 푸시
-2. **DID.md 업데이트** — 오늘 작업 내용 기록
-3. **TODO.md 업데이트** — 완료 항목 체크 + 새 할 일 추가
-4. **블로그 개발일지 발행** — Supabase에 devlog 포스트 직접 insert
+2. **TODO.md → DID.md** — TODO에서 완료된 항목을 DID.md로 이동
+3. **블로그 개발일지 발행** — DID.md 내용 기반으로 Supabase에 devlog 발행
 
 ## When to Run
 
@@ -61,9 +60,11 @@ git push origin main
 
 push 실패 시 사용자에게 알리고 다음 단계로 진행.
 
-### Step 2: DID.md 업데이트
+### Step 2: TODO.md → DID.md 이동
 
-#### 2a. 변경 내용 수집
+#### 2a. 완료 항목 식별
+
+오늘 세션의 커밋 내용과 작업 기록을 기반으로 TODO.md에서 완료된 항목을 식별.
 
 ```bash
 # 오늘의 커밋 목록
@@ -73,9 +74,21 @@ git log --oneline --since="today" --format="%h %s"
 git diff HEAD~N --name-status  # N은 오늘 커밋 수
 ```
 
-#### 2b. DID.md에 오늘 섹션 추가
+#### 2b. TODO.md 업데이트
+
+1. 완료된 항목을 `[ ]` → `[x]`로 변경
+2. 세션 중 발견된 새로운 할 일이 있으면 적절한 우선순위 섹션에 추가
+
+**규칙:**
+- 기존 TODO.md 형식 유지 (높은/중간/낮은 우선순위 + 하위 카테고리)
+- 이미 있는 항목 중복 추가 금지
+- 새 항목은 `- [ ]` 형식으로 추가
+
+#### 2c. DID.md에 완료 항목 기록
 
 파일: `/home/chosangyun/MyBlog/DID.md`
+
+TODO.md에서 이번 세션에 완료 처리된 항목들 + 커밋 내용을 분석하여 DID.md에 기록.
 
 **기존 형식을 반드시 유지:**
 
@@ -83,6 +96,12 @@ git diff HEAD~N --name-status  # N은 오늘 커밋 수
 ## YYYY-MM-DD: <작업 제목 요약>
 
 <1-2문장 설명>
+
+### 완료 항목
+
+- <TODO에서 완료된 항목 1>
+- <TODO에서 완료된 항목 2>
+- ...
 
 ### 변경 파일
 
@@ -102,45 +121,29 @@ git diff HEAD~N --name-status  # N은 오늘 커밋 수
 - 오늘 날짜 섹션이 이미 있으면 그 아래에 새 서브섹션 추가
 - 작업 유형: NEW (새 파일), MODIFY (수정), DELETE (삭제)
 - 아키텍처 섹션은 구조적 변경이 있을 때만 포함
+- **"완료 항목" 섹션에는 TODO.md에서 이번에 완료 처리한 항목만 나열**
 
-### Step 3: TODO.md 업데이트
+### Step 3: 블로그 개발일지 발행
 
-#### 3a. 세션에서 완료된 작업 식별
+#### 3a. MDX 콘텐츠 생성
 
-오늘 커밋 내용과 DID.md 내용을 기반으로 TODO.md의 항목과 대조.
-
-#### 3b. 완료 항목 체크
-
-매칭되는 TODO 항목을 `[ ]` → `[x]`로 변경.
-
-#### 3c. 새 할 일 추가
-
-세션 중 발견된 새로운 할 일이 있으면 적절한 우선순위 섹션에 추가.
-
-**규칙:**
-- 기존 TODO.md 형식 유지 (높은/중간/낮은 우선순위 + 하위 카테고리)
-- 이미 있는 항목 중복 추가 금지
-- 새 항목은 `- [ ]` 형식으로 추가
-
-### Step 4: 블로그 개발일지 발행
-
-#### 4a. MDX 콘텐츠 생성
-
-DID.md + TODO.md 내용을 기반으로 개발일지 MDX 작성:
+**DID.md의 오늘 섹션을 기반으로** 개발일지 MDX 작성:
 
 ```markdown
 # <날짜> 개발일지: <제목>
 
 ## 오늘 한 일
 
-<DID.md 내용 요약 — 변경 파일 테이블 포함>
+<DID.md의 완료 항목 + 변경 파일 테이블>
 
 ## 다음 할 일
 
 <TODO.md에서 우선순위 높은 미완료 항목 3-5개>
 ```
 
-#### 4b. Supabase에 직접 Insert
+**핵심: DID.md가 블로그 콘텐츠의 원본 소스**
+
+#### 3b. Supabase에 직접 Insert
 
 `.env.local`에서 `NEXT_PUBLIC_SUPABASE_URL`과 `NEXT_PUBLIC_SUPABASE_ANON_KEY`를 읽어서 REST API로 insert:
 
@@ -165,7 +168,7 @@ curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
   -H "Prefer: return=representation" \
   -d '{
     "title": "<제목>",
-    "content": "<MDX 콘텐츠>",
+    "content": "<DID.md 기반 MDX 콘텐츠>",
     "slug": "'${SLUG}'",
     "description": "<한줄 설명>",
     "category": "dev",
@@ -183,13 +186,13 @@ curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
 
 **slug 충돌 시:** 같은 날짜에 이미 devlog가 있으면 `devlog-YYYY-MM-DD-2` 형식으로 suffix 추가.
 
-#### 4c. 발행 확인
+#### 3c. 발행 확인
 
 curl 응답에서 `id`가 포함되면 성공. 실패 시 에러 메시지를 사용자에게 보여주고 수동 발행 안내.
 
-### Step 5: DID.md, TODO.md 커밋 + Push
+### Step 4: DID.md, TODO.md 커밋 + Push
 
-Step 2-3에서 변경된 DID.md, TODO.md를 추가 커밋:
+Step 2에서 변경된 DID.md, TODO.md를 추가 커밋:
 
 ```bash
 git add DID.md TODO.md
@@ -202,7 +205,7 @@ EOF
 git push origin main
 ```
 
-### Step 6: 완료 리포트
+### Step 5: 완료 리포트
 
 ```markdown
 ## 작업완료 리포트
@@ -211,13 +214,10 @@ git push origin main
 - 커밋: <커밋 해시> — <커밋 메시지>
 - Push: origin/main ✓
 
-### DID.md
-- 추가된 섹션: YYYY-MM-DD: <제목>
-- 변경 파일 수: N개
-
-### TODO.md
-- 완료 처리: N개
-- 새로 추가: N개
+### TODO → DID
+- 완료 처리: N개 항목
+- 새로 추가: N개 항목
+- DID.md 섹션: YYYY-MM-DD: <제목>
 
 ### 블로그
 - 발행: <포스트 제목>
@@ -228,15 +228,16 @@ git push origin main
 
 | File | Purpose |
 |------|---------|
-| `DID.md` | 완료 작업 기록 |
-| `TODO.md` | 할 일 목록 |
+| `DID.md` | 완료 작업 기록 (블로그 콘텐츠 원본) |
+| `TODO.md` | 할 일 목록 (완료 시 DID로 이동) |
 | `lib/posts.ts` | 포스트 CRUD (createPost 참고) |
 | `lib/supabase.ts` | Supabase 클라이언트 |
 | `.env.local` | Supabase URL/Key 환경변수 |
 
 ## Exceptions
 
-1. **변경사항 없음** — git 변경사항이 없어도 DID.md/TODO.md 업데이트 및 블로그 발행은 진행
+1. **변경사항 없음** — git 변경사항이 없어도 TODO→DID 이동 및 블로그 발행은 진행
 2. **Push 실패** — 네트워크 문제 등으로 push 실패 시 나머지 단계는 계속 진행, 마지막에 수동 push 안내
 3. **Supabase 연결 실패** — 블로그 발행 실패 시 MDX 콘텐츠를 콘솔에 출력하여 수동 발행 가능하게 함
 4. **같은 날 중복 실행** — DID.md에 같은 날짜 섹션이 이미 있으면 하위에 append, 블로그 slug에 suffix 추가
+5. **완료 항목 없음** — TODO에서 완료 처리할 항목이 없어도 커밋 기반으로 DID.md 작성 및 블로그 발행 진행

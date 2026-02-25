@@ -5,6 +5,8 @@ import {
   getAllPosts,
 } from '@/lib/posts';
 import PostCard from '@/components/PostCard';
+import DevProjectFilter from '@/components/DevProjectFilter';
+import { getProjects } from '@/lib/projects';
 import { notFound } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
 
@@ -36,6 +38,8 @@ export default async function CategoryPage({ params }: Props) {
   const posts = await getPostsByCategory(category);
   const categoryName = getCategoryName(category);
   const allPosts = await getAllPosts();
+  const isDev = category === 'dev';
+  const projects = isDev ? await getProjects() : [];
 
   const searchPosts = allPosts.map((post) => ({
     title: post.title,
@@ -47,7 +51,7 @@ export default async function CategoryPage({ params }: Props) {
   return (
     <div className="flex flex-col gap-5">
       {/* Category Header + Search */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-0.5">
             {categoryName}
@@ -62,7 +66,9 @@ export default async function CategoryPage({ params }: Props) {
       </div>
 
       {/* Posts */}
-      {posts.length > 0 ? (
+      {isDev ? (
+        <DevProjectFilter posts={posts} projects={projects} />
+      ) : posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {posts.map((post) => (
             <PostCard
@@ -72,6 +78,7 @@ export default async function CategoryPage({ params }: Props) {
               date={post.date}
               slug={post.slug}
               tags={post.tags}
+              category={post.category}
             />
           ))}
         </div>

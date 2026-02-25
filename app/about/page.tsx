@@ -128,7 +128,7 @@ export default function AboutPage() {
 
                 <div>
                   <time className="text-caption-sm font-medium text-muted uppercase tracking-wider">
-                    {entry.date}
+                    {new Date(entry.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </time>
                   <h3 className="text-body-lg font-semibold text-foreground mt-1">
                     {entry.title}

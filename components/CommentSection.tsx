@@ -121,8 +121,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   };
 
   return (
-    <section className="flex flex-col gap-6">
-      <h2 className="text-heading-sm text-foreground">
+    <section className="border border-card-border rounded-xl bg-card p-5 sm:p-6 flex flex-col gap-5">
+      <h2 className="text-body-lg font-semibold text-foreground">
         Comments{comments.length > 0 ? ` (${comments.length})` : ''}
       </h2>
 
@@ -195,30 +195,28 @@ export default function CommentSection({ postId }: CommentSectionProps) {
 
       {/* Comment Form */}
       {userId ? (
-        <div className="bg-card border border-card-border rounded-xl p-4">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="댓글을 작성하세요..."
-              rows={3}
-              maxLength={2000}
-              className="w-full resize-none rounded-lg bg-surface p-4 text-body text-foreground placeholder-muted focus-ring"
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-caption text-muted">
-                {content.length.toLocaleString()} / 2,000
-              </span>
-              <button
-                type="submit"
-                disabled={!content.trim() || submitting}
-                className="px-4 py-2 text-body font-medium bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50"
-              >
-                {submitting ? '작성 중...' : '댓글 작성'}
-              </button>
-            </div>
-          </form>
-        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="댓글을 작성하세요..."
+            rows={2}
+            maxLength={2000}
+            className="w-full resize-none rounded-lg border border-card-border bg-surface px-3 py-2 text-body-sm text-foreground placeholder-muted focus-ring"
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-caption-sm text-muted">
+              {content.length.toLocaleString()} / 2,000
+            </span>
+            <button
+              type="submit"
+              disabled={!content.trim() || submitting}
+              className="px-3 py-1.5 text-body-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50"
+            >
+              {submitting ? '작성 중...' : '댓글 작성'}
+            </button>
+          </div>
+        </form>
       ) : (
         <div className="p-4 bg-surface rounded-lg text-center">
           <p className="text-body-sm text-muted">

@@ -13,6 +13,7 @@ export interface PostMeta {
   category: string;
   slug: string;
   readingTime: string;
+  project_id: string | null;
 }
 
 export interface PostWithContent extends PostMeta {
@@ -36,6 +37,7 @@ function mapPostToMeta(post: Post): PostMeta {
     category: post.category || 'daily',
     slug: post.slug,
     readingTime: calculateReadingTime(post.content),
+    project_id: post.project_id,
   };
 }
 

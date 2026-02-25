@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import BlogSidebar from '@/components/BlogSidebar';
 import { getAllPosts, getPostCountByCategory } from '@/lib/posts';
-import { getCategoryName } from '@/lib/categories';
+import { getCategoryName, getCategoryColor, getCategoryIcon } from '@/lib/categories';
 
 const MOCK_POSTS = [
   {
@@ -113,7 +113,8 @@ export default async function Home() {
                         {post.title}
                       </span>
                       <time className="text-caption-xs text-muted shrink-0 ml-6 tabular-nums">
-                        {post.date}
+                        {new Date(post.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}{' '}
+                        {new Date(post.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
                       </time>
                     </Link>
                   </li>
@@ -161,20 +162,41 @@ export default async function Home() {
                     {/* Content */}
                     <div className="p-3">
                       <div className="flex items-center gap-2 mb-1.5">
-                        <span className="text-caption-xs font-medium text-primary">
+                        <span className="flex items-center gap-1 text-caption-xs font-medium">
+                          <svg
+                            className="w-3 h-3 shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            style={{ color: getCategoryColor(post.category) }}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d={getCategoryIcon(post.category)} />
+                          </svg>
                           {getCategoryName(post.category)}
                         </span>
                         <span className="text-caption-xs text-muted">
-                          {post.date}
+                          {new Date(post.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}{' '}
+                          {new Date(post.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </span>
                       </div>
                       <h3 className="text-body-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
                         {post.title}
                       </h3>
-                      {post.description && (
-                        <p className="mt-1 text-caption-sm text-subtle leading-relaxed line-clamp-2">
-                          {post.description}
-                        </p>
+                      <p className="mt-1 text-caption-sm text-subtle leading-snug line-clamp-2 min-h-[2.3rem] max-h-[2.3rem] overflow-hidden">
+                        {post.description || '\u00A0'}
+                      </p>
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {post.tags.slice(0, 5).map((tag: string) => (
+                            <span
+                              key={tag}
+                              className="px-1 text-[9px] leading-4 text-muted bg-surface rounded"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </article>

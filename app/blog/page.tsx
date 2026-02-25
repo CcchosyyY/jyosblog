@@ -34,6 +34,7 @@ export default async function BlogPage({ searchParams }: Props) {
               date={post.date}
               slug={post.slug}
               tags={post.tags}
+              category={post.category}
             />
           ))}
         </div>

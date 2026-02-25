@@ -70,6 +70,7 @@ export default async function TagPage({ params }: Props) {
             date={post.date}
             slug={post.slug}
             tags={post.tags}
+            category={post.category}
           />
         ))}
       </div>
