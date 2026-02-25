@@ -14,6 +14,7 @@
 ### 사용자 기능
 - [ ] 로그인 후 원래 페이지로 돌아가기 (`next` 쿼리 파라미터 지원)
 - [ ] 시리즈/연재 기능
+- [ ] Vercel 환경변수에 `SUPABASE_SERVICE_ROLE_KEY` 추가 (프로덕션 RLS)
 
 ### UI 개선
 - [ ] EmptyState 컴포넌트 적용 (글 없을 때 일러스트)
@@ -63,3 +64,9 @@
 - [x] `/admin/login` 페이지 정리 (OAuth 우선, 비밀번호 접이식)
 - [x] 관련 글 추천 (같은 카테고리/태그 기반)
 - [x] Header 모바일 드롭다운 UX 개선 (아바타 + 메뉴 통합)
+- [x] Supabase RLS 설정 (service_role 분리)
+- [x] 작업준비/작업완료 스킬 자동화 구축
+- [x] Header 중앙 정렬 네비게이션 + 넓은 검색바
+- [x] 로그인 페이지 리디자인 (OAuth 중심, 글로우 이펙트)
+- [x] CLAUDE.md 전면 정리
+- [x] 크로스 프로젝트 devlog 발행 구조 구축 (~/.env.blog)
