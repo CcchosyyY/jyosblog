@@ -19,6 +19,8 @@
 ### UI 개선
 - [ ] EmptyState 컴포넌트 적용 (글 없을 때 일러스트)
 - [ ] lucide-react 아이콘 라이브러리 도입 (현재 인라인 SVG)
+- [ ] admin/login 페이지 하드코딩 hex 색상 → CSS 변수 마이그레이션
+- [ ] 라이트모드 전체 시각 검증 (다크모드 완료 후)
 
 ### 디자인
 - [ ] Pencil 디자인에 로그인/프로필 관련 컴포넌트 추가
@@ -70,3 +72,12 @@
 - [x] 로그인 페이지 리디자인 (OAuth 중심, 글로우 이펙트)
 - [x] CLAUDE.md 전면 정리
 - [x] 크로스 프로젝트 devlog 발행 구조 구축 (~/.env.blog)
+- [x] 디자인 시스템 기반 구축 (타이포그래피 토큰, 상태/카테고리 CSS 변수)
+- [x] Avatar 공유 컴포넌트 생성 (Header, Comment, Profile, Sidebar 통합)
+- [x] CommentSection 전면 재설계 (divider 레이아웃, 낙관적 UI, 글자수 카운터)
+- [x] 블로그 상세 페이지 개선 (max-w-2xl, 태그 헤더, Related Posts 리스트)
+- [x] text-[Npx] → 시맨틱 토큰 전체 마이그레이션 (25+ 파일)
+- [x] dark: prefix 위반 및 하드코딩 색상 전면 제거
+- [x] 백엔드 프로필 입력 검증 + createSupabaseFromRequest 중복 제거
+- [x] 프로젝트 기능 (CRUD, devlog 타임라인, 필터, 상태 배지)
+- [x] MCP 우선 확인 워크플로우 규칙 CLAUDE.md에 추가

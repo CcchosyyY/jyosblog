@@ -1,5 +1,49 @@
 # DID - 완료된 작업 기록
 
+## 2026-02-25: 전체 UI 개선 — 디자인 시스템, 타이포그래피, 백엔드 검증
+
+디자인 시스템 기반 구축(타이포그래피 토큰 10개, 상태/카테고리 CSS 변수), Avatar 공유 컴포넌트 생성, CommentSection 전면 재설계(낙관적 UI), 블로그 상세 페이지 개선, 25+파일 text-[Npx] → 시맨틱 토큰 마이그레이션, 백엔드 입력 검증 및 중복 유틸 추출.
+
+### 변경 파일
+
+| 파일 | 작업 | 내용 |
+|------|------|------|
+| `tailwind.config.ts` | MODIFY | 타이포그래피 스케일(heading-xl~caption-xs) + 상태/카테고리 색상 토큰 추가 |
+| `app/globals.css` | MODIFY | CSS 변수(status, category) 추가, focus-ring 유틸리티, prose 스타일 개선 |
+| `components/Avatar.tsx` | NEW | 공유 Avatar 컴포넌트 (xs~xl 5사이즈, Image+이니셜 폴백) |
+| `lib/supabase-server.ts` | NEW | createSupabaseFromRequest 공유 유틸리티 |
+| `components/CommentSection.tsx` | MODIFY | divider 레이아웃, 낙관적 UI, 글자수 카운터, Avatar 적용 |
+| `app/blog/[slug]/page.tsx` | MODIFY | max-w-2xl, 태그 헤더 이동, 메타 한줄 dot구분, Related Posts 리스트화 |
+| `components/TableOfContents.tsx` | MODIFY | border-left 인디케이터, "On this page" 라벨 |
+| `app/api/profile/route.ts` | MODIFY | 입력 검증(nickname 50자, bio 500자, avatar_url http) |
+| `app/api/comments/route.ts` | MODIFY | 공유 supabase-server 사용 |
+| `app/api/likes/route.ts` | MODIFY | 공유 supabase-server 사용 |
+| `components/Header.tsx` | MODIFY | Avatar 적용, dark: prefix 제거 |
+| `components/ProfileCard.tsx` | MODIFY | Avatar 적용 |
+| `components/CategorySidebar.tsx` | MODIFY | dark: prefix, 하드코딩 hex 제거 |
+| `components/StatusBadge.tsx` | MODIFY | status CSS 변수 사용 |
+| `app/page.tsx` | MODIFY | 카테고리 CSS 변수, hover scale 제거, 시맨틱 토큰 |
+| 기타 ~15개 파일 | MODIFY | text-[Npx] → 시맨틱 토큰 마이그레이션 |
+| `CLAUDE.md` | MODIFY | Workflow 섹션 추가 (MCP 우선 확인 규칙) |
+
+### 아키텍처
+
+```
+[Design System Foundation]
+  tailwind.config.ts ─── fontSize tokens (10개)
+  globals.css ─────────── CSS vars (status/category) + focus-ring
+  Avatar.tsx ──────────── 공유 컴포넌트 (Header, Comment, Profile, Sidebar)
+
+[Backend]
+  supabase-server.ts ──── 공유 유틸 ← comments/likes/profile API
+  profile/route.ts ────── 입력 검증 추가
+
+[Component Redesign]
+  CommentSection ──── divider list + optimistic UI
+  Blog [slug] ─────── max-w-2xl + tag header + simple related
+  TableOfContents ──── border-left indicator
+```
+
 ## 2026-02-25: Skills 시스템, RLS 보안, UI 리디자인, 신규 기능 추가
 
 스킬(작업준비/작업완료) 자동화 시스템 구축, Supabase RLS + service_role 분리, Header/Login 리디자인, 댓글/좋아요/조회수/검색/프로필/404 기능 추가.
