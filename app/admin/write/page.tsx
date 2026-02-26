@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useRef, useState, useEffect } from 'react';
+import { Suspense, useRef, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import PostEditor from '@/components/PostEditor';
@@ -12,13 +12,18 @@ function WritePageContent() {
   const template = searchParams.get('template') || undefined;
   const [category, setCategory] = useState('daily');
   const [showMobileMemos, setShowMobileMemos] = useState(false);
-  const insertRef = useRef<((content: string) => void) | null>(null);
+  const insertHandlerRef = useRef<((content: string) => void) | null>(null);
 
   const handleInsert = (content: string) => {
-    if (insertRef.current) {
-      insertRef.current(content);
-    }
+    insertHandlerRef.current?.(content);
   };
+
+  const registerInsertHandler = useCallback(
+    (handler: (content: string) => void) => {
+      insertHandlerRef.current = handler;
+    },
+    []
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,10 +37,17 @@ function WritePageContent() {
     return () => clearInterval(interval);
   }, [category]);
 
+  // Listen for /memo slash command
+  useEffect(() => {
+    const handler = () => setShowMobileMemos(true);
+    window.addEventListener('open-memo-sidebar', handler);
+    return () => window.removeEventListener('open-memo-sidebar', handler);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-background border-b border-card-border">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm border-b border-card-border">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
@@ -44,7 +56,7 @@ function WritePageContent() {
               >
                 &larr; 뒤로
               </Link>
-              <h1 className="text-xl font-bold text-foreground">
+              <h1 className="text-lg font-bold text-foreground">
                 새 글 작성
               </h1>
             </div>
@@ -72,14 +84,20 @@ function WritePageContent() {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6">
           <div className="flex-1 min-w-0">
-            <PostEditor initialMemoId={memoId} initialTemplate={template} onInsertRef={insertRef} />
+            <PostEditor
+              initialMemoId={memoId}
+              initialTemplate={template}
+              onInsert={registerInsertHandler}
+            />
           </div>
 
-          <div className="hidden lg:block w-[320px] shrink-0 sticky top-[73px] max-h-[calc(100vh-73px)] bg-card border border-card-border rounded-xl overflow-hidden">
-            <MemoSidebar category={category} onInsert={handleInsert} />
+          <div className="hidden lg:block w-[280px] shrink-0">
+            <div className="sticky top-[61px] max-h-[calc(100vh-85px)] bg-card border border-card-border rounded-xl overflow-hidden">
+              <MemoSidebar category={category} onInsert={handleInsert} />
+            </div>
           </div>
         </div>
 

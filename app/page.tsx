@@ -135,7 +135,7 @@ export default async function Home() {
                   href={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-200">
+                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-200 hover:scale-[1.03]">
                     {/* Thumbnail */}
                     <div
                       className={`aspect-[16/10] bg-gradient-to-br ${

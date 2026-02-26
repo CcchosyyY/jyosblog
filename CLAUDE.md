@@ -212,6 +212,7 @@ token: string (PK), created_at, expires_at (7일)
 
 | 스킬 | 설명 |
 |------|------|
+| `작업실행` | 작업을 세부 단계로 분해하고, 순차/병렬 모드로 계획 후 실행합니다 |
 | `작업준비` | 세션 시작 자동화 — Chrome 탭 열기, dev 서버 시작, git 상태 확인, TODO 요약 |
 | `작업완료` | 세션 마무리 자동화 — git commit/push, DID.md/TODO.md 업데이트, 개발일지 블로그 발행 |
 | `manage-skills` | 세션 변경사항 분석 → 검증 스킬 드리프트 탐지/수정 |

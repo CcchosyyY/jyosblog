@@ -19,7 +19,7 @@ export default function PostCard({
   category,
 }: PostCardProps) {
   return (
-    <article className="group h-40 bg-card rounded-lg border border-card-border hover:border-primary/30 transition-all duration-200 hover:shadow-md hover:shadow-primary/5">
+    <article className="group h-40 bg-card rounded-lg border border-card-border hover:border-primary/30 transition-all duration-200 hover:shadow-md hover:shadow-primary/5 hover:scale-[1.03]">
       <Link href={`/blog/${slug}`} className="flex flex-col justify-between h-full p-3.5">
         <div>
           <div className="flex items-center gap-2">

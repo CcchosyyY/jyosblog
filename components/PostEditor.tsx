@@ -1,35 +1,38 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { CATEGORIES } from '@/lib/categories';
 import { suggestCategory } from '@/lib/suggest-category';
 import type { Post } from '@/lib/supabase';
+import type { EditorInstance } from 'novel';
 import Image from 'next/image';
-import MarkdownToolbar from '@/components/MarkdownToolbar';
+import BlockEditor from '@/components/BlockEditor';
+import EditorHelpModal from '@/components/EditorHelpModal';
+import { markdownToHtml } from '@/lib/markdown-utils';
 
 interface PostEditorProps {
   post?: Post;
   initialMemoId?: string;
   initialTemplate?: string;
-  onInsertRef?: React.MutableRefObject<((content: string) => void) | null>;
+  onInsert?: (handler: (content: string) => void) => void;
 }
 
 export default function PostEditor({
   post,
   initialMemoId,
   initialTemplate,
-  onInsertRef,
+  onInsert,
 }: PostEditorProps) {
   const router = useRouter();
   const isEditing = !!post;
 
   const [title, setTitle] = useState(post?.title || '');
-  const [content, setContent] = useState(post?.content || '');
   const [slug, setSlug] = useState(post?.slug || '');
   const [description, setDescription] = useState(post?.description || '');
   const [category, setCategory] = useState(post?.category || 'daily');
-  const [tags, setTags] = useState(post?.tags?.join(', ') || '');
+  const [tags, setTags] = useState<string[]>(post?.tags || []);
+  const [tagInput, setTagInput] = useState('');
   const [thumbnail, setThumbnail] = useState(post?.thumbnail || '');
   const [suggestedCategory, setSuggestedCategory] = useState<string | null>(
     null
@@ -38,36 +41,32 @@ export default function PostEditor({
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showCover, setShowCover] = useState(!!post?.thumbnail);
+  const [slugEditing, setSlugEditing] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [initialMarkdown, setInitialMarkdown] = useState(
+    post?.content || ''
+  );
 
-  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<EditorInstance | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Expose insert handler for parent to wire up MemoSidebar
-  useEffect(() => {
-    if (onInsertRef) {
-      onInsertRef.current = (memoContent: string) => {
-        const textarea = contentRef.current;
-        if (textarea) {
-          const start = textarea.selectionStart;
-          const end = textarea.selectionEnd;
-          const newContent =
-            content.substring(0, start) +
-            memoContent +
-            content.substring(end);
-          setContent(newContent);
-          setTimeout(() => {
-            textarea.focus();
-            textarea.selectionStart = start + memoContent.length;
-            textarea.selectionEnd = start + memoContent.length;
-          }, 0);
-        } else {
-          setContent((prev) => prev + '\n\n' + memoContent);
-        }
-      };
-    }
-  }, [content, onInsertRef]);
+  // Register insert handler for parent (MemoSidebar)
+  const handleInsertContent = useCallback(
+    (memoContent: string) => {
+      const editor = editorRef.current;
+      if (!editor) return;
+      const html = markdownToHtml(memoContent);
+      editor.chain().focus().insertContent(html).run();
+    },
+    []
+  );
 
-  // Pre-fill from memo if initialMemoId is provided
+  useEffect(() => {
+    onInsert?.(handleInsertContent);
+  }, [onInsert, handleInsertContent]);
+
+  // Pre-fill from memo
   useEffect(() => {
     if (!initialMemoId || isEditing) return;
 
@@ -79,9 +78,9 @@ export default function PostEditor({
           const memo = Array.isArray(data) ? data[0] : data;
           if (memo) {
             if (memo.title) setTitle(memo.title);
-            if (memo.content) setContent(memo.content);
+            if (memo.content) setInitialMarkdown(memo.content);
             if (memo.category) setCategory(memo.category);
-            if (memo.tags?.length) setTags(memo.tags.join(', '));
+            if (memo.tags?.length) setTags(memo.tags);
           }
         }
       } catch (error) {
@@ -92,6 +91,7 @@ export default function PostEditor({
     fetchMemo();
   }, [initialMemoId, isEditing]);
 
+  // Template
   useEffect(() => {
     if (!initialTemplate || isEditing) return;
 
@@ -107,26 +107,16 @@ export default function PostEditor({
         .replace('.', '');
       setTitle(`${dateStr} 개발일지`);
       setCategory('daily');
-      setTags('devlog');
-      setContent(
+      setTags(['devlog']);
+      setInitialMarkdown(
         `## 오늘 한 일\n\n- \n\n## 배운 점\n\n- \n\n## 내일 할 일\n\n- \n`
       );
     }
   }, [initialTemplate, isEditing]);
 
+  // Auto-slug
   useEffect(() => {
-    if (content.length > 50) {
-      const suggested = suggestCategory(content);
-      if (suggested !== category) {
-        setSuggestedCategory(suggested);
-      } else {
-        setSuggestedCategory(null);
-      }
-    }
-  }, [content, category]);
-
-  useEffect(() => {
-    if (!isEditing && title) {
+    if (!isEditing && title && !slugEditing) {
       const generatedSlug = title
         .toLowerCase()
         .replace(/[^a-z0-9가-힣\s]/g, '')
@@ -134,7 +124,31 @@ export default function PostEditor({
         .slice(0, 100);
       setSlug(generatedSlug);
     }
-  }, [title, isEditing]);
+  }, [title, isEditing, slugEditing]);
+
+  const handleEditorReady = useCallback((editor: EditorInstance) => {
+    editorRef.current = editor;
+  }, []);
+
+  const handleContentChange = useCallback(
+    (md: string) => {
+      if (md.length > 50) {
+        const suggested = suggestCategory(md);
+        if (suggested !== category) {
+          setSuggestedCategory(suggested);
+        } else {
+          setSuggestedCategory(null);
+        }
+      }
+    },
+    [category]
+  );
+
+  const getEditorMarkdown = (): string => {
+    const editor = editorRef.current;
+    if (!editor) return '';
+    return editor.storage.markdown.getMarkdown();
+  };
 
   const handleUpload = async (file: File) => {
     if (uploading) return;
@@ -201,11 +215,27 @@ export default function PostEditor({
     if (file) handleUpload(file);
   };
 
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const newTag = tagInput.trim();
+      if (newTag && !tags.includes(newTag)) {
+        setTags([...tags, newTag]);
+      }
+      setTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((t) => t !== tagToRemove));
+  };
+
   const handleSave = async (status: 'draft' | 'published') => {
     if (!title.trim()) {
       setError('제목을 입력해주세요.');
       return;
     }
+    const content = getEditorMarkdown();
     if (!content.trim()) {
       setError('내용을 입력해주세요.');
       return;
@@ -218,18 +248,13 @@ export default function PostEditor({
     setError('');
     setSaving(true);
 
-    const tagArray = tags
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-
     const postData = {
       title,
       content,
       slug,
       description,
       category,
-      tags: tagArray,
+      tags,
       status,
       suggested_category: suggestedCategory,
       thumbnail: thumbnail || null,
@@ -262,14 +287,11 @@ export default function PostEditor({
     return CATEGORIES.find((c) => c.id === id)?.name || id;
   };
 
-  const inputClass =
-    'w-full px-4 py-2.5 border border-card-border rounded-lg bg-surface text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm';
-
   return (
-    <div className="bg-card border border-card-border rounded-xl overflow-hidden">
+    <div className="flex flex-col min-h-[calc(100vh-120px)]">
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 bg-primary/10 border-b border-primary/30 text-primary px-6 py-3 text-body-sm font-medium">
+        <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 text-primary px-4 py-3 rounded-lg text-body-sm font-medium mb-4">
           <svg
             className="w-4 h-4 shrink-0"
             fill="currentColor"
@@ -281,161 +303,210 @@ export default function PostEditor({
         </div>
       )}
 
-      {/* Header: Thumbnail (left) + Title & Meta (right) */}
-      <div className="flex items-start gap-5 border-b border-card-border px-4 py-3">
-        {/* Thumbnail */}
-        <div className="shrink-0">
-          {thumbnail ? (
-            <div className="relative group w-[180px] h-[180px] rounded-xl overflow-hidden border border-card-border">
-              <Image
-                src={thumbnail}
-                alt="Thumbnail"
-                fill
-                className="object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => setThumbnail('')}
-                className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+      {/* Main editor area */}
+      <div className="bg-card border border-card-border rounded-xl overflow-hidden flex-1 flex flex-col">
+        {/* Cover image */}
+        {showCover && (
+          <div className="relative border-b border-card-border">
+            {thumbnail ? (
+              <div className="relative group w-full h-48 overflow-hidden">
+                <Image
+                  src={thumbnail}
+                  alt="Cover"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                  >
+                    변경
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setThumbnail('');
+                      setShowCover(false);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+                  >
+                    삭제
+                  </button>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+            ) : (
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onClick={() => fileInputRef.current?.click()}
+                className={`flex items-center justify-center gap-2 w-full h-32 cursor-pointer transition-colors ${
+                  isDragOver
+                    ? 'bg-primary/5'
+                    : 'bg-surface/50 hover:bg-surface'
+                }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          ) : (
-            <div
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onClick={() => fileInputRef.current?.click()}
-              className={`flex flex-col items-center justify-center gap-2 w-[180px] h-[180px] rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
-                isDragOver
-                  ? 'border-primary bg-primary/5'
-                  : 'border-card-border bg-surface hover:border-subtle'
-              }`}
+                {uploading ? (
+                  <span className="text-sm text-muted">업로드 중...</span>
+                ) : (
+                  <span className="text-sm text-muted">
+                    이미지를 드래그하거나 클릭하여 커버 추가
+                  </span>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Title & Description */}
+        <div className="relative px-8 pt-8 pb-0">
+          {/* Help button - top right */}
+          <button
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="absolute top-3 right-3 inline-flex items-center justify-center w-7 h-7 text-muted hover:text-foreground hover:bg-surface border border-card-border rounded-full transition-colors"
+            title="에디터 사용법"
+          >
+            <span className="text-xs font-bold">?</span>
+          </button>
+
+          {!showCover && (
+            <button
+              type="button"
+              onClick={() => setShowCover(true)}
+              className="text-xs text-muted hover:text-foreground transition-colors mb-4 flex items-center gap-1"
             >
-              {uploading ? (
-                <span className="text-xs text-muted">업로드 중...</span>
-              ) : (
-                <>
-                  <svg className="w-7 h-7 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
-                  </svg>
-                  <span className="text-caption-sm text-muted">썸네일</span>
-                </>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-            </div>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+              </svg>
+              커버 추가
+            </button>
           )}
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full text-3xl font-bold text-foreground bg-transparent placeholder-muted/50 focus:outline-none"
+            placeholder="제목을 입력하세요"
+          />
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full mt-2 text-body text-muted bg-transparent placeholder-muted/50 focus:outline-none"
+            placeholder="글에 대한 짧은 설명을 입력하세요"
+          />
         </div>
 
-        {/* Title + Meta */}
-        <div className="flex-1 min-w-0 flex flex-col h-[180px]">
-          {/* Meta fields (top) */}
-          <div className="flex flex-col gap-1.5 px-1 pb-3 border-b border-card-border text-caption">
-            <div className="flex items-center">
-              <span className="shrink-0 w-14 text-muted font-medium">슬러그</span>
+        {/* Metadata chips */}
+        <div className="px-8 py-4 flex flex-wrap items-center gap-2 border-b border-card-border">
+          {/* Category */}
+          <select
+            data-category-select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-2.5 py-1 border border-card-border rounded-lg bg-surface text-foreground text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          {suggestedCategory && (
+            <button
+              type="button"
+              onClick={() => {
+                setCategory(suggestedCategory);
+                setSuggestedCategory(null);
+              }}
+              className="text-caption-sm text-link hover:text-primary transition-colors"
+            >
+              추천: {getCategoryName(suggestedCategory)}
+            </button>
+          )}
+
+          <div className="w-px h-4 bg-card-border" />
+
+          {/* Tags */}
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface text-xs text-foreground"
+            >
+              {tag}
+              <button
+                type="button"
+                onClick={() => handleRemoveTag(tag)}
+                className="text-muted hover:text-foreground transition-colors"
+              >
+                &times;
+              </button>
+            </span>
+          ))}
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleAddTag}
+            className="px-2 py-0.5 bg-transparent text-xs text-foreground placeholder-muted focus:outline-none w-20"
+            placeholder="+ 태그"
+          />
+
+          <div className="w-px h-4 bg-card-border" />
+
+          {/* Slug */}
+          <div className="flex items-center gap-1 text-xs text-muted">
+            <span>slug:</span>
+            {slugEditing ? (
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="flex-1 min-w-0 px-2 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-caption focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="url-friendly-slug"
+                onBlur={() => setSlugEditing(false)}
+                autoFocus
+                className="px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground text-xs focus:outline-none focus:ring-1 focus:ring-primary w-40"
               />
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center">
-                <span className="shrink-0 w-14 text-muted font-medium">카테고리</span>
-                <select
-                  data-category-select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-16 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground text-caption focus:outline-none focus:ring-1 focus:ring-primary"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-                {suggestedCategory && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCategory(suggestedCategory);
-                      setSuggestedCategory(null);
-                    }}
-                    className="ml-1 text-caption-sm text-link hover:text-primary transition-colors whitespace-nowrap"
-                  >
-                    추천: {getCategoryName(suggestedCategory)}
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center">
-                <span className="shrink-0 w-8 text-muted font-medium">태그</span>
-                <input
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  className="w-24 px-1.5 py-0.5 border border-card-border rounded bg-surface text-foreground placeholder-muted text-caption focus:outline-none focus:ring-1 focus:ring-primary"
-                  placeholder="태그1, 태그2"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Title + Description (bottom, vertically centered in remaining space) */}
-          <div className="flex-1 flex flex-col justify-start px-1 pt-3">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-xl font-bold text-foreground bg-transparent placeholder-muted focus:outline-none"
-              placeholder="제목을 입력하세요"
-            />
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full mt-2 text-body-sm text-subtle bg-transparent placeholder-muted focus:outline-none"
-              placeholder="글에 대한 짧은 설명을 입력하세요"
-            />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSlugEditing(true)}
+                className="text-foreground hover:text-primary transition-colors truncate max-w-[200px]"
+              >
+                {slug || 'auto'}
+              </button>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="px-6 py-4">
-        <label className="block text-sm font-semibold text-foreground mb-2">
-          내용 (Markdown)
-        </label>
-        <div className="relative flex gap-2">
-          <textarea
-            ref={contentRef}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className={`${inputClass} font-mono min-h-[400px] resize-y flex-1`}
-            placeholder="Markdown으로 글을 작성하세요..."
+        {/* Block Editor */}
+        <div className="flex-1">
+          <BlockEditor
+            initialContent={initialMarkdown}
+            onEditorReady={handleEditorReady}
+            onContentChange={handleContentChange}
           />
-          <div className="sticky top-4 self-start shrink-0">
-            <MarkdownToolbar
-              contentRef={contentRef}
-              content={content}
-              setContent={setContent}
-            />
-          </div>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex justify-end gap-3 px-6 py-4 border-t border-card-border">
+      {/* Actions - sticky bottom bar */}
+      <div className="sticky bottom-0 flex justify-end gap-3 py-4 bg-background">
         <button
           type="button"
           onClick={() => router.push('/admin')}
@@ -447,7 +518,7 @@ export default function PostEditor({
           type="button"
           onClick={() => handleSave('draft')}
           disabled={saving}
-          className="px-5 py-2.5 border border-secondary text-secondary rounded-lg text-sm font-medium hover:bg-secondary/10 transition-colors disabled:opacity-50"
+          className="px-5 py-2.5 border border-card-border text-foreground rounded-lg text-sm font-medium hover:bg-surface transition-colors disabled:opacity-50"
         >
           {saving ? '저장 중...' : '임시저장'}
         </button>
@@ -460,6 +531,8 @@ export default function PostEditor({
           {saving ? '저장 중...' : '발행하기'}
         </button>
       </div>
+
+      <EditorHelpModal open={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, use } from 'react';
+import { useState, useEffect, useRef, useCallback, use } from 'react';
 import Link from 'next/link';
 import PostEditor from '@/components/PostEditor';
 import MemoSidebar from '@/components/MemoSidebar';
@@ -16,7 +16,7 @@ export default function EditPage({ params }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showMobileMemos, setShowMobileMemos] = useState(false);
-  const insertRef = useRef<((content: string) => void) | null>(null);
+  const insertHandlerRef = useRef<((content: string) => void) | null>(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -39,10 +39,22 @@ export default function EditPage({ params }: Props) {
   }, [id]);
 
   const handleInsert = (content: string) => {
-    if (insertRef.current) {
-      insertRef.current(content);
-    }
+    insertHandlerRef.current?.(content);
   };
+
+  const registerInsertHandler = useCallback(
+    (handler: (content: string) => void) => {
+      insertHandlerRef.current = handler;
+    },
+    []
+  );
+
+  // Listen for /memo slash command
+  useEffect(() => {
+    const handler = () => setShowMobileMemos(true);
+    window.addEventListener('open-memo-sidebar', handler);
+    return () => window.removeEventListener('open-memo-sidebar', handler);
+  }, []);
 
   if (loading) {
     return (
@@ -70,8 +82,8 @@ export default function EditPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-background border-b border-card-border">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm border-b border-card-border">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
@@ -80,7 +92,7 @@ export default function EditPage({ params }: Props) {
               >
                 &larr; 뒤로
               </Link>
-              <h1 className="text-xl font-bold text-foreground">글 수정</h1>
+              <h1 className="text-lg font-bold text-foreground">글 수정</h1>
             </div>
             <button
               type="button"
@@ -106,23 +118,22 @@ export default function EditPage({ params }: Props) {
         </div>
       </header>
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex gap-6">
-          {/* Editor */}
           <div className="flex-1 min-w-0">
-            <PostEditor post={post} onInsertRef={insertRef} />
+            <PostEditor post={post} onInsert={registerInsertHandler} />
           </div>
 
-          {/* Memo Sidebar - Desktop */}
-          <div className="hidden lg:block w-[320px] shrink-0 sticky top-[73px] max-h-[calc(100vh-73px)] bg-card border border-card-border rounded-xl overflow-hidden">
-            <MemoSidebar
-              category={post.category}
-              onInsert={handleInsert}
-            />
+          <div className="hidden lg:block w-[280px] shrink-0">
+            <div className="sticky top-[61px] max-h-[calc(100vh-85px)] bg-card border border-card-border rounded-xl overflow-hidden">
+              <MemoSidebar
+                category={post.category}
+                onInsert={handleInsert}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Memo Sidebar - Mobile overlay */}
         {showMobileMemos && (
           <div className="lg:hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
             <div className="absolute right-0 top-0 bottom-0 w-[320px] bg-card border-l border-card-border shadow-xl">

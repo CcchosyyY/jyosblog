@@ -101,7 +101,7 @@ export default function Header() {
             href="/"
             className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
           >
-            Jyo&apos;s Blog
+            Jyos Blog
           </Link>
 
           {/* Desktop Navigation — absolute center */}
