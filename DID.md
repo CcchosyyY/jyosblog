@@ -1,5 +1,53 @@
 # DID - 완료된 작업 기록
 
+## 2026-02-27: Block Editor 마이그레이션 + DevProjectFilter 아코디언 리디자인
+
+MarkdownToolbar를 Tiptap/Novel 기반 BlockEditor로 교체하고, 개발 카테고리 페이지의 DevProjectFilter를 프로젝트별 아코디언 섹션 + 넷플릭스 스타일 가로 스크롤로 재설계.
+
+### 완료 항목
+
+- Block Editor(Tiptap/Novel) 마이그레이션 — 슬래시 커맨드, 이미지 업로드, 캘아웃, 토글 지원
+- DevProjectFilter 아코디언 + 가로 스크롤 리디자인
+- About 페이지 레이아웃 업데이트
+- 에디터 도움말 모달 추가
+
+### 변경 파일
+
+| 파일 | 작업 | 내용 |
+|------|------|------|
+| `components/DevProjectFilter.tsx` | MODIFY | 탭 필터 → 프로젝트별 아코디언 섹션 + 가로 스크롤 + StatusBadge/GitHub/Live 링크 |
+| `components/BlockEditor.tsx` | NEW | Tiptap/Novel 기반 블록 에디터 컴포넌트 |
+| `components/EditorHelpModal.tsx` | NEW | 에디터 단축키/사용법 도움말 모달 |
+| `components/editor/ImageBlockView.tsx` | NEW | 에디터 이미지 블록 NodeView |
+| `components/editor/ImageUploadView.tsx` | NEW | 에디터 이미지 업로드 플레이스홀더 NodeView |
+| `components/MarkdownToolbar.tsx` | DELETE | BlockEditor로 대체 |
+| `components/PostEditor.tsx` | MODIFY | BlockEditor 통합, MDX↔HTML 변환 |
+| `lib/editor-extensions.ts` | NEW | Tiptap 확장 설정 (슬래시 커맨드, 캘아웃, 토글 등) |
+| `lib/editor-image-extension.ts` | NEW | 커스텀 이미지 확장 (업로드, 리사이즈, 정렬) |
+| `lib/markdown-utils.ts` | NEW | MDX↔HTML 변환 유틸리티 |
+| `app/about/page.tsx` | MODIFY | 레이아웃 및 스타일 업데이트 |
+| `app/globals.css` | MODIFY | 에디터 관련 CSS 스타일 대량 추가 (이미지 블록, 캘아웃, 토글, 테이블 등) |
+| `app/admin/write/page.tsx` | MODIFY | BlockEditor 연동 |
+| `app/admin/edit/[id]/page.tsx` | MODIFY | BlockEditor 연동 |
+| `package.json` | MODIFY | Tiptap/Novel 관련 패키지 추가 |
+
+### 아키텍처
+
+```
+[Block Editor]
+  PostEditor.tsx ──── BlockEditor.tsx ──── Tiptap/Novel
+    │                   ├─ editor-extensions.ts (slash cmd, callout, toggle, table)
+    │                   └─ editor-image-extension.ts (upload, resize, align)
+    └─ markdown-utils.ts (MDX ↔ HTML 변환)
+
+[DevProjectFilter]
+  category/[category]/page.tsx
+    └─ DevProjectFilter.tsx
+         ├─ 프로젝트별 아코디언 (StatusBadge + GitHub/Live 링크)
+         ├─ 가로 스크롤 PostCard (snap-x + scrollbar-hide)
+         └─ 기타 글 섹션
+```
+
 ## 2026-02-25: 전체 UI 개선 — 디자인 시스템, 타이포그래피, 백엔드 검증
 
 디자인 시스템 기반 구축(타이포그래피 토큰 10개, 상태/카테고리 CSS 변수), Avatar 공유 컴포넌트 생성, CommentSection 전면 재설계(낙관적 UI), 블로그 상세 페이지 개선, 25+파일 text-[Npx] → 시맨틱 토큰 마이그레이션, 백엔드 입력 검증 및 중복 유틸 추출.
