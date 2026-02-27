@@ -1,5 +1,50 @@
 # DID - 완료된 작업 기록
 
+## 2026-02-27: 인증 플로우 안정화 + CSS 변수 시스템 수정
+
+Supabase 브라우저 클라이언트의 세션 초기화 타이밍 문제를 근본적으로 수정하고, CSS 변수를 hex→RGB 포맷으로 변환하여 Tailwind 투명도 수식어 지원을 복구.
+
+### 완료 항목
+
+- 인증 플로우 수정: getUser() → onAuthStateChange(INITIAL_SESSION) 전환
+- CSS 변수 시스템 수정: hex → RGB 컴포넌트 포맷 변환
+- Vercel 환경변수 전체 확인 (5개 모두 정상 설정)
+
+### 변경 파일
+
+| 파일 | 작업 | 내용 |
+|------|------|------|
+| `lib/supabase-browser.ts` | MODIFY | 싱글톤 패턴 적용 (매 호출마다 새 인스턴스 생성 → 캐시) |
+| `components/Header.tsx` | MODIFY | 중복 getUser() 제거, onAuthStateChange만 사용, admin 쿠키 체크 pathname 의존성 분리 |
+| `app/dashboard/page.tsx` | MODIFY | getUser() → onAuthStateChange(INITIAL_SESSION) + isMounted 가드 |
+| `app/profile/page.tsx` | MODIFY | getUser() → onAuthStateChange(INITIAL_SESSION) + isMounted 가드 |
+| `components/LikeButton.tsx` | MODIFY | getUser() → onAuthStateChange(INITIAL_SESSION) |
+| `components/CommentSection.tsx` | MODIFY | getUser() → onAuthStateChange(INITIAL_SESSION/SIGNED_IN) |
+| `app/globals.css` | MODIFY | 모든 CSS 변수를 hex(#B3001B) → RGB 컴포넌트(179 0 27) 포맷으로 변환 |
+| `tailwind.config.ts` | MODIFY | 모든 색상을 rgb(var(...) / <alpha-value>) 포맷으로 변경 |
+
+### 아키텍처
+
+```
+[인증 세션 감지 개선]
+  Before: getUser() → 쿠키 세션 초기화 전 null 반환 → 잘못된 로그인 리다이렉트
+  After:  onAuthStateChange(INITIAL_SESSION) → 세션 초기화 완료 대기 → 정확한 판단
+
+  getSupabaseBrowser() [싱글톤]
+    ├─ Header.tsx (onAuthStateChange → setUser)
+    ├─ dashboard/page.tsx (INITIAL_SESSION → setUser or redirect)
+    ├─ profile/page.tsx (INITIAL_SESSION → setUserId + fetch profile)
+    ├─ LikeButton.tsx (INITIAL_SESSION → fetch likes with userId)
+    └─ CommentSection.tsx (INITIAL_SESSION/SIGNED_IN → set user info)
+
+[CSS 변수 시스템]
+  globals.css: --primary: #B3001B → --primary: 179 0 27
+  tailwind.config: primary: 'var(--primary)' → primary: 'rgb(var(--primary) / <alpha-value>)'
+  결과: bg-primary/10, text-muted/40 등 투명도 수식어 정상 작동
+```
+
+---
+
 ## 2026-02-27: 로그인 리다이렉트, lucide-react, EmptyState, 메모 개선, 최적화
 
 로그인 후 원래 페이지로 돌아가기, 인라인 SVG → lucide-react 아이콘 교체, EmptyState 공통 컴포넌트 도입, 메모 검색/수정/정렬/DnD 기능 추가, 이미지/번들 최적화 등 8개 작업을 병렬 실행으로 완료.
