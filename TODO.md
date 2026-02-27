@@ -3,7 +3,6 @@
 ## 높은 우선순위
 
 ### 콘텐츠
-- [x] 첫 번째 블로그 글 작성
 - [ ] About 페이지 내용 업데이트 (프로필 사진, 실제 소개글)
 
 
@@ -12,14 +11,9 @@
 ## 중간 우선순위
 
 ### 사용자 기능
-- [x] 로그인 후 원래 페이지로 돌아가기 (`next` 쿼리 파라미터 지원)
 - [ ] 시리즈/연재 기능
-- [x] Vercel 환경변수에 `SUPABASE_SERVICE_ROLE_KEY` 추가 (프로덕션 RLS)
 
 ### UI 개선
-- [x] EmptyState 컴포넌트 적용 (글 없을 때 일러스트)
-- [x] lucide-react 아이콘 라이브러리 도입 (현재 인라인 SVG)
-- [x] admin/login 페이지 하드코딩 hex 색상 → CSS 변수 마이그레이션
 - [ ] 라이트모드 전체 시각 검증 (다크모드 완료 후)
 
 ### 디자인
@@ -38,15 +32,8 @@
 ### 마케팅
 - [ ] 랜딩페이지 제작 (일반 사용자 대상, 한 줄 카피 + 스크린샷 + CTA)
 
-### 성능
-- [x] 이미지 최적화
-- [x] 번들 사이즈 최적화
-
 ### 메모 개선
-- [x] 메모 검색 기능 (키워드로 필터링)
 - [ ] 메모 드래그 앤 드롭으로 PostEditor에 삽입
-- [x] 메모 인라인 수정 기능
-- [x] 메모 정렬 옵션 (날짜순, 카테고리순)
 
 ### 기타
 - [ ] 커스텀 도메인 구매 (jyos.dev, jyos.blog 등)
@@ -91,3 +78,8 @@
 - [x] admin/login hex 색상 → CSS 변수 마이그레이션
 - [x] 이미지 최적화 (ImageBlockView img→Image) + 번들 최적화 (BlockEditor 동적 import)
 - [x] 메모 검색/인라인 수정/정렬/드래그앤드롭 기능
+- [x] 첫 번째 블로그 글 작성
+- [x] 인라인 관리자 버튼 (블로그/프로젝트 전 페이지 수정/삭제)
+- [x] 프로젝트 상세 탭 UI (Overview/DevLog + TechStack/Screenshot/Metrics)
+- [x] 프로젝트 CRUD API + AdminProjectModal
+- [x] 작업완료 스킬 개선 (TODO 유효성 검증, DID 3일 보관, published_at 실시간)

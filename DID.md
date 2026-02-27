@@ -1,5 +1,65 @@
 # DID - 완료된 작업 기록
 
+## 2026-02-28: 인라인 관리자 버튼 + 프로젝트 탭 UI + Overview 컴포넌트
+
+모든 주요 페이지(블로그 상세, 메인, 프로젝트 목록/상세)에 인라인 관리자 수정/삭제 버튼을 추가하고, 프로젝트 상세 페이지에 Overview/DevLog 탭 + TechStack/Screenshot/KeyMetrics 컴포넌트를 구현. 병렬 팀(impl-blog, impl-project, verifier) 구성으로 작업 진행.
+
+### 완료 항목
+
+- 인라인 관리자 버튼 (블로그/프로젝트 전 페이지 수정/삭제)
+- 프로젝트 상세 탭 UI (Overview/DevLog + TechStack/Screenshot/Metrics)
+- 프로젝트 CRUD API + AdminProjectModal
+- 작업완료 스킬 개선 (TODO 유효성 검증, DID 3일 보관, published_at 실시간)
+
+### 변경 파일
+
+| 파일 | 작업 | 내용 |
+|------|------|------|
+| `components/AdminPostActions.tsx` | NEW | 포스트 삭제 버튼 (confirm dialog, DELETE API) |
+| `components/AdminProjectModal.tsx` | NEW | 프로젝트 생성/수정 모달 (전체 필드) |
+| `components/AdminProjectButton.tsx` | NEW | "+ 새 프로젝트" 버튼 래퍼 |
+| `components/AdminProjectEditButton.tsx` | NEW | 프로젝트 수정 버튼 래퍼 |
+| `components/ProjectTabs.tsx` | NEW | Overview/DevLog 탭 전환 + "새 개발일지" 버튼 |
+| `components/ProjectOverview.tsx` | NEW | Overview 탭: 소개 + TechStack + Screenshot + Metrics |
+| `components/TechStackGrid.tsx` | NEW | 기술 스택 그리드 (아이콘/카테고리) |
+| `components/ScreenshotGallery.tsx` | NEW | 스크린샷 갤러리 + 라이트박스 모달 |
+| `components/KeyMetrics.tsx` | NEW | 핵심 성과 카드 그리드 |
+| `app/api/projects/route.ts` | NEW | 프로젝트 CRUD API (POST/PUT/DELETE) |
+| `app/blog/[slug]/page.tsx` | MODIFY | 관리자 수정/삭제 버튼 추가 |
+| `app/page.tsx` | MODIFY | Recent/Featured에 관리자 수정 버튼 추가 |
+| `app/projects/[slug]/page.tsx` | MODIFY | 탭 UI 통합 + 관리자 수정 버튼 |
+| `app/projects/page.tsx` | MODIFY | 새 프로젝트 버튼 + isAdmin 전달 |
+| `components/ProjectCard.tsx` | MODIFY | 관리자 수정/삭제 hover 버튼 |
+| `components/CommentSection.tsx` | MODIFY | 관리자 댓글 삭제 기능 |
+| `components/PostCard.tsx` | MODIFY | leading-relaxed → leading-snug (line-clamp 수정) |
+| `lib/supabase.ts` | MODIFY | TechStackItem, KeyMetricItem 타입 + Project 필드 추가 |
+| `.claude/skills/작업완료/SKILL.md` | MODIFY | TODO 유효성 검증, DID 3일 보관, published_at 실시간 |
+
+### 아키텍처
+
+```
+[인라인 관리자 버튼]
+  isAuthenticated() → Server Component 조건부 렌더링
+    ├─ app/page.tsx → Recent: opacity-0 group-hover 연필 아이콘
+    │                → Featured: 우상단 hover 연필 아이콘
+    ├─ app/blog/[slug]/page.tsx → 제목 옆 연필 + AdminPostActions(휴지통)
+    ├─ app/projects/page.tsx → AdminProjectButton("+ 새 프로젝트")
+    │                        → ProjectCard: hover 수정/삭제 아이콘
+    └─ app/projects/[slug]/page.tsx → AdminProjectEditButton
+                                    → ProjectTabs: "새 개발일지" 버튼
+
+[프로젝트 상세 탭]
+  ProjectTabs (client: 탭 전환)
+    ├─ Overview: ProjectOverview (server)
+    │    ├─ MarkdownRenderer (long_description)
+    │    ├─ TechStackGrid (tech_stack[])
+    │    ├─ ScreenshotGallery (screenshots[], client: 라이트박스)
+    │    └─ KeyMetrics (key_metrics[])
+    └─ DevLog: PostCard 3열 그리드
+```
+
+---
+
 ## 2026-02-27: 인증 플로우 안정화 + CSS 변수 시스템 수정
 
 Supabase 브라우저 클라이언트의 세션 초기화 타이밍 문제를 근본적으로 수정하고, CSS 변수를 hex→RGB 포맷으로 변환하여 Tailwind 투명도 수식어 지원을 복구.
@@ -262,31 +322,3 @@ Supabase RLS 보안 모델:
   curl POST → /rest/v1/posts (service_role 인증)
 ```
 
-## 2026-02-23: 일반 사용자 로그인 + 관리자 분리
-
-모든 사용자가 소셜 로그인 가능하도록 변경하되, 관리자 이메일(`ADMIN_EMAIL`)로 로그인 시에만 `/admin` 대시보드 접근 가능하게 구현.
-
-### 변경 파일
-
-| 파일 | 작업 | 내용 |
-|------|------|------|
-| `middleware.ts` | MODIFY | `@supabase/ssr` `createServerClient`로 매 요청마다 Supabase Auth 세션 리프레시 + matcher를 전체 경로로 확장 |
-| `app/auth/callback/route.ts` | NEW | OAuth 콜백 — 모든 사용자 Supabase 세션 유지, 관리자만 `admin_session` + `is_admin` 쿠키 추가 |
-| `app/login/page.tsx` | NEW | Google/GitHub 소셜 로그인 전용 페이지 (비밀번호 필드 없음) |
-| `components/Header.tsx` | MODIFY | Supabase Auth로 사용자 확인 → 아바타/드롭다운 표시, 관리자면 Dashboard 링크 |
-| `app/api/auth/logout/route.ts` | NEW | Supabase signOut + `is_admin`/`admin_session` 쿠키 정리 |
-| `next.config.mjs` | MODIFY | Google/GitHub 아바타 이미지 도메인 허용 |
-| `lib/supabase-browser.ts` | NEW | 브라우저용 Supabase 클라이언트 (`createBrowserClient`) |
-| `app/globals.css` | MODIFY | 로그인 카드 애니메이션 추가 |
-| `app/admin/login/page.tsx` | MODIFY | OAuth 소셜 로그인 버튼 추가 + UI 개선 |
-
-### 아키텍처
-
-```
-사용자: /login → OAuth (Google/GitHub) → /auth/callback
-  ├─ 관리자 이메일 → admin_session + is_admin 쿠키 → /admin 리다이렉트
-  └─ 일반 사용자 → Supabase 세션만 유지 → / 리다이렉트
-
-Header: Supabase 세션 확인 → 아바타/드롭다운 (관리자면 Dashboard 링크)
-로그아웃: /api/auth/logout → Supabase signOut + 모든 쿠키 정리
-```
