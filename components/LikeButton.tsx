@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface LikeButtonProps {
   postId: string;
@@ -17,19 +18,24 @@ export default function LikeButton({ postId }: LikeButtonProps) {
 
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      const uid = user?.id ?? null;
-      setUserId(uid);
-      const params = new URLSearchParams({ postId });
-      if (uid) params.set('userId', uid);
-      fetch(`/api/likes?${params}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCount(data.count ?? 0);
-          setLiked(data.liked ?? false);
-        })
-        .catch(() => {});
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (event === 'INITIAL_SESSION') {
+          const uid = session?.user?.id ?? null;
+          setUserId(uid);
+          const params = new URLSearchParams({ postId });
+          if (uid) params.set('userId', uid);
+          fetch(`/api/likes?${params}`)
+            .then((res) => res.json())
+            .then((data) => {
+              setCount(data.count ?? 0);
+              setLiked(data.liked ?? false);
+            })
+            .catch(() => {});
+        }
+      }
+    );
+    return () => subscription.unsubscribe();
   }, [postId]);
 
   const handleToggle = async () => {

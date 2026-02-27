@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
-import type { User } from '@supabase/supabase-js';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 const NAV_LINKS = [
   { href: '/', label: 'Blog' },
@@ -24,23 +24,21 @@ export default function Header() {
   useEffect(() => {
     const supabase = getSupabaseBrowser();
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
-
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null);
     });
 
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
     const isAdminCookie = document.cookie
       .split('; ')
       .find((c) => c.startsWith('is_admin='));
     setIsAdmin(!!isAdminCookie);
-
-    return () => subscription.unsubscribe();
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

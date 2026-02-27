@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import ProfileCard from '@/components/ProfileCard';
 
 interface ProfileData {
@@ -21,24 +22,43 @@ export default function ProfilePage() {
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      setUserId(user.id);
-      fetch(`/api/profile?userId=${user.id}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data: ProfileData | null) => {
-          if (data) {
-            setNickname(data.nickname || '');
-            setBio(data.bio || '');
+
+    // Use onAuthStateChange to wait for session initialization from cookies
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (!isMounted) return;
+        if (event === 'INITIAL_SESSION') {
+          if (!session?.user) {
+            router.replace('/login?next=/profile');
+            return;
           }
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false));
-    });
+          setUserId(session.user.id);
+          fetch(`/api/profile?userId=${session.user.id}`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data: ProfileData | null) => {
+              if (!isMounted) return;
+              if (data) {
+                setNickname(data.nickname || '');
+                setBio(data.bio || '');
+              }
+            })
+            .catch(() => {})
+            .finally(() => {
+              if (isMounted) setLoading(false);
+            });
+        }
+        if (event === 'SIGNED_OUT') {
+          router.replace('/login?next=/profile');
+        }
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {

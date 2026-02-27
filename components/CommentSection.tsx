@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import Avatar from '@/components/Avatar';
 import type { Comment } from '@/lib/comments';
 
@@ -23,24 +24,30 @@ export default function CommentSection({ postId }: CommentSectionProps) {
 
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserId(user?.id ?? null);
-      if (user) {
-        setUserName(
-          user.user_metadata?.full_name ||
-            user.user_metadata?.name ||
-            user.email?.split('@')[0] ||
-            'User'
-        );
-        setUserAvatar(user.user_metadata?.avatar_url ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+          setUserId(session?.user?.id ?? null);
+          if (session?.user) {
+            setUserName(
+              session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name ||
+                session.user.email?.split('@')[0] ||
+                'User'
+            );
+            setUserAvatar(session.user.user_metadata?.avatar_url ?? null);
+          }
+        }
       }
-    });
+    );
 
     fetch(`/api/comments?postId=${postId}`)
       .then((res) => res.json())
       .then((data) => setComments(Array.isArray(data) ? data : []))
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    return () => subscription.unsubscribe();
   }, [postId]);
 
   const handleSubmit = useCallback(

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
-import type { User } from '@supabase/supabase-js';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 export default function UserDashboard() {
   const [user, setUser] = useState<User | null>(null);
@@ -11,15 +11,31 @@ export default function UserDashboard() {
   const router = useRouter();
 
   useEffect(() => {
+    let isMounted = true;
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        router.push('/login');
-      } else {
-        setUser(user);
+
+    // Use onAuthStateChange to wait for session initialization from cookies
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (!isMounted) return;
+        if (event === 'INITIAL_SESSION') {
+          if (session?.user) {
+            setUser(session.user);
+          } else {
+            router.replace('/login?next=/dashboard');
+          }
+          setLoading(false);
+        }
+        if (event === 'SIGNED_OUT') {
+          router.replace('/login?next=/dashboard');
+        }
       }
-      setLoading(false);
-    });
+    );
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [router]);
 
   if (loading) {
