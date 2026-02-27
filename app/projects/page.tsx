@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { getProjects, getDevlogCountByProject } from '@/lib/projects';
 import ProjectCard from '@/components/ProjectCard';
 import ProjectFilter from '@/components/ProjectFilter';
+import EmptyState from '@/components/EmptyState';
+import { FolderOpen } from 'lucide-react';
 import type { ProjectStatus } from '@/lib/projects';
 
 export const metadata = {
@@ -48,9 +50,11 @@ async function ProjectList({
 
   if (filtered.length === 0) {
     return (
-      <p className="text-muted text-sm py-12 text-center">
-        프로젝트가 없습니다.
-      </p>
+      <EmptyState
+        icon={<FolderOpen size={48} />}
+        title="프로젝트가 없습니다"
+        description="아직 등록된 프로젝트가 없거나, 선택한 필터에 해당하는 프로젝트가 없습니다."
+      />
     );
   }
 

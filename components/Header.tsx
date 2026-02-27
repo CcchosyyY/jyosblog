@@ -92,6 +92,13 @@ export default function Header() {
     user?.email?.split('@')[0] ||
     'User';
 
+  // Build login href with ?next= param so user returns after login
+  const isLoginPage =
+    pathname === '/login' || pathname === '/admin/login';
+  const loginHref = isLoginPage
+    ? '/login'
+    : `/login?next=${encodeURIComponent(pathname)}`;
+
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-card-border">
       <nav className="max-w-6xl mx-auto px-6">
@@ -172,7 +179,7 @@ export default function Header() {
               </div>
             ) : (
               <Link
-                href="/login"
+                href={loginHref}
                 className="flex items-center gap-1.5 px-2.5 h-9 rounded-lg hover:bg-surface transition-colors text-subtle hover:text-foreground"
                 aria-label="Login"
               >
@@ -303,7 +310,7 @@ export default function Header() {
                 </>
               ) : (
                 <Link
-                  href="/login"
+                  href={loginHref}
                   className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-subtle hover:bg-primary/15 hover:text-primary rounded-lg transition-colors"
                 >
                   <svg

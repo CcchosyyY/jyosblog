@@ -53,8 +53,13 @@ export async function GET(request: NextRequest) {
 
   const isAdmin = email && adminEmails.includes(email.toLowerCase());
 
-  // Redirect: admin → /admin, regular user → /
-  const redirectUrl = isAdmin ? '/admin' : '/';
+  // Determine redirect destination from `next` query param
+  const next = searchParams.get('next');
+  // Security: only allow internal paths (starts with / but not //)
+  const isValidNext = next && next.startsWith('/') && !next.startsWith('//');
+  const defaultRedirect = isAdmin ? '/admin' : '/';
+  const redirectUrl = isValidNext ? next : defaultRedirect;
+
   const response = NextResponse.redirect(
     new URL(redirectUrl, request.url)
   );

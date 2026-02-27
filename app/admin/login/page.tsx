@@ -1,26 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
+import { Lock, AlertCircle, ChevronRight } from 'lucide-react';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/admin';
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const urlError = params.get('error');
+    const urlError = searchParams.get('error');
     if (urlError === 'unauthorized') {
       setError('허용되지 않은 계정입니다.');
     } else if (urlError === 'auth_failed') {
       setError('인증에 실패했습니다. 다시 시도해주세요.');
     }
-  }, []);
+  }, [searchParams]);
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
     setSocialLoading(provider);
@@ -31,7 +33,7 @@ export default function AdminLoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
 
@@ -60,7 +62,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (data.success) {
-        router.push('/admin');
+        router.push(next);
         router.refresh();
       } else {
         setError(data.error || '로그인에 실패했습니다.');
@@ -73,50 +75,32 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center bg-[#08080F] relative overflow-hidden">
+    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center bg-background relative overflow-hidden">
       {/* Background glow effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#B3001B] opacity-[0.04] blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-[#5B21B6] opacity-[0.03] blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-glow-primary opacity-[0.04] blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-glow-accent opacity-[0.03] blur-[100px] pointer-events-none" />
 
       {/* Login Card */}
-      <div className="relative w-[440px] p-11 bg-[#111118] border border-[#FFFFFF0D] rounded-3xl flex flex-col items-center gap-7 shadow-2xl shadow-black/40 animate-login-card">
+      <div className="relative w-[440px] p-11 bg-card border border-card-border rounded-3xl flex flex-col items-center gap-7 shadow-2xl shadow-black/40 animate-login-card">
         {/* Icon Circle */}
-        <div className="w-[72px] h-[72px] rounded-full bg-[#B3001B20] border-[1.5px] border-[#B3001B33] flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-            />
-          </svg>
+        <div className="w-[72px] h-[72px] rounded-full bg-primary/[0.13] border-[1.5px] border-primary/20 flex items-center justify-center">
+          <Lock className="w-8 h-8 text-primary" strokeWidth={1.5} />
         </div>
 
         {/* Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <h2 className="text-heading-xl font-bold text-white tracking-tight">
+          <h2 className="text-heading-xl font-bold text-foreground tracking-tight">
             Admin Login
           </h2>
-          <p className="text-sm text-[#FFFFFF59]">
+          <p className="text-sm text-muted">
             관리자 계정으로 로그인하세요
           </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="w-full flex items-center gap-2 bg-[#B3001B15] border border-[#B3001B33] text-[#FF6B7A] p-3 rounded-xl text-body-sm font-medium animate-login-card">
-            <svg
-              className="w-4 h-4 shrink-0"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg>
+          <div className="w-full flex items-center gap-2 bg-primary/[0.08] border border-primary/20 text-error-foreground p-3 rounded-xl text-body-sm font-medium animate-login-card">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             {error}
           </div>
         )}
@@ -127,7 +111,7 @@ export default function AdminLoginPage() {
             type="button"
             onClick={() => handleSocialLogin('google')}
             disabled={socialLoading !== null}
-            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-[10px] bg-[#1A1A24] border border-[#FFFFFF0D] text-[#FFFFFFCC] hover:bg-[#22222E] hover:border-[#FFFFFF1A] transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-[10px] bg-surface border border-card-border text-subtle hover:bg-surface/80 hover:border-card-border transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
               <path
@@ -153,7 +137,7 @@ export default function AdminLoginPage() {
             type="button"
             onClick={() => handleSocialLogin('github')}
             disabled={socialLoading !== null}
-            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-[10px] bg-[#1A1A24] border border-[#FFFFFF0D] text-[#FFFFFFCC] hover:bg-[#22222E] hover:border-[#FFFFFF1A] transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-[10px] bg-surface border border-card-border text-subtle hover:bg-surface/80 hover:border-card-border transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-[18px] h-[18px]"
@@ -171,21 +155,12 @@ export default function AdminLoginPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="w-full flex items-center justify-center gap-1.5 text-xs text-[#FFFFFF33] hover:text-[#FFFFFF59] transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 text-xs text-muted/60 hover:text-muted transition-colors"
           >
-            <svg
+            <ChevronRight
               className={`w-3 h-3 transition-transform ${showPassword ? 'rotate-90' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
               strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            />
             비밀번호로 로그인
           </button>
 
@@ -199,7 +174,7 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="flex-1 px-4 py-2.5 border border-[#FFFFFF0D] rounded-[10px] bg-[#1A1A24] text-white placeholder-[#FFFFFF4D] focus:outline-none focus:ring-2 focus:ring-[#B3001B]/40 focus:border-[#B3001B]/50 text-sm transition-all duration-200"
+                className="flex-1 px-4 py-2.5 border border-card-border rounded-[10px] bg-surface text-foreground placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/50 text-sm transition-all duration-200"
                 placeholder="관리자 비밀번호"
               />
               <button
@@ -214,5 +189,13 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

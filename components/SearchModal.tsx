@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Search, SearchX } from 'lucide-react';
+import EmptyState from '@/components/EmptyState';
 
 interface SearchPost {
   title: string;
@@ -100,19 +102,7 @@ export default function SearchModal() {
       <div className="w-full max-w-lg bg-card border border-card-border rounded-xl shadow-2xl overflow-hidden animate-fadeIn">
         {/* Search Input */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-card-border">
-          <svg
-            className="w-5 h-5 text-muted shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Search className="w-5 h-5 text-muted shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -157,9 +147,12 @@ export default function SearchModal() {
                 </button>
               ))
             ) : (
-              <div className="px-4 py-8 text-center text-sm text-muted">
-                검색 결과가 없습니다.
-              </div>
+              <EmptyState
+                icon={<SearchX size={36} />}
+                title="검색 결과가 없습니다"
+                description="다른 키워드로 검색해 보세요."
+                className="py-8"
+              />
             )}
           </div>
         )}

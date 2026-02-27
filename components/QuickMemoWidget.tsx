@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Search, X } from 'lucide-react';
 import { CATEGORIES } from '@/lib/categories';
 import type { QuickMemo } from '@/lib/quick-memos';
 
@@ -12,6 +13,7 @@ export default function QuickMemoWidget() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListOpen, setIsListOpen] = useState(false);
   const [hoveredMemo, setHoveredMemo] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -110,6 +112,17 @@ export default function QuickMemoWidget() {
     setCategory(null);
   };
 
+  // Client-side filtering by search query
+  const filteredMemos = useMemo(() => {
+    if (!searchQuery.trim()) return memos;
+    const q = searchQuery.toLowerCase();
+    return memos.filter(
+      (memo) =>
+        memo.content.toLowerCase().includes(q) ||
+        (memo.title && memo.title.toLowerCase().includes(q))
+    );
+  }, [memos, searchQuery]);
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
@@ -188,7 +201,31 @@ export default function QuickMemoWidget() {
       {/* Memo List */}
       {isListOpen && memos.length > 0 && (
         <div className="relative mt-2 space-y-1">
-          {memos.map((memo) => {
+          {/* Search Input */}
+          <div className="relative mb-1.5">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="w-full pl-8 pr-7 py-1.5 rounded-lg border border-card-border bg-surface text-xs text-foreground placeholder-muted focus:outline-none"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+          {filteredMemos.length === 0 ? (
+            <div className="px-3 py-2 text-xs text-muted text-center">
+              No memos match
+            </div>
+          ) : (
+          filteredMemos.map((memo) => {
             const catName =
               CATEGORIES.find((c) => c.id === memo.category)?.name ||
               memo.category;
@@ -265,7 +302,8 @@ export default function QuickMemoWidget() {
                 )}
               </div>
             );
-          })}
+          })
+          )}
         </div>
       )}
     </div>

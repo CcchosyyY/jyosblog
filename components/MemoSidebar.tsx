@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Search, X, Check } from 'lucide-react';
 import type { QuickMemo } from '@/lib/quick-memos';
 import { CATEGORIES, getCategoryName } from '@/lib/categories';
 
@@ -19,6 +20,7 @@ export default function MemoSidebar({
   const [unprocessedOnly, setUnprocessedOnly] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchMemos = useCallback(async () => {
     setLoading(true);
@@ -100,18 +102,49 @@ export default function MemoSidebar({
     setSelectedIds(new Set());
   };
 
+  // Client-side filtering by search query
+  const filteredMemos = useMemo(() => {
+    if (!searchQuery.trim()) return memos;
+    const q = searchQuery.toLowerCase();
+    return memos.filter(
+      (memo) =>
+        memo.content.toLowerCase().includes(q) ||
+        (memo.title && memo.title.toLowerCase().includes(q))
+    );
+  }, [memos, searchQuery]);
+
   return (
     <div className="flex flex-col overflow-hidden h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-card-border">
         <h3 className="text-base font-semibold text-foreground">Memos</h3>
         <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-          {memos.length}
+          {filteredMemos.length}
         </span>
       </div>
 
-      {/* Filter Section */}
-      <div className="px-4 py-3 border-b border-card-border">
+      {/* Search & Filter Section */}
+      <div className="px-4 py-3 border-b border-card-border space-y-2">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search memos..."
+            className="w-full pl-8 pr-7 py-1.5 rounded-md border border-card-border bg-surface text-xs text-foreground placeholder-muted focus:outline-none"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+        {/* Category Filter */}
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
@@ -132,12 +165,12 @@ export default function MemoSidebar({
           <div className="p-4 text-center text-sm text-muted">
             Loading...
           </div>
-        ) : memos.length === 0 ? (
+        ) : filteredMemos.length === 0 ? (
           <div className="p-4 text-center text-sm text-muted">
-            No memos found
+            {searchQuery ? 'No memos match your search' : 'No memos found'}
           </div>
         ) : (
-          memos.map((memo) => {
+          filteredMemos.map((memo) => {
             const isExpanded = expandedId === memo.id;
             return (
               <div
@@ -157,19 +190,7 @@ export default function MemoSidebar({
                   }`}
                 >
                   {selectedIds.has(memo.id) && (
-                    <svg
-                      className="w-4 h-4 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                    <Check className="w-4 h-4 text-white" strokeWidth={3} />
                   )}
                 </button>
 

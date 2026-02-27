@@ -1,20 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
-export default function LoginPage() {
+function LoginForm() {
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/';
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const urlError = params.get('error');
+    const urlError = searchParams.get('error');
     if (urlError === 'auth_failed') {
       setError('인증에 실패했습니다. 다시 시도해주세요.');
     }
-  }, []);
+  }, [searchParams]);
 
   const handleSocialLogin = async (provider: 'google' | 'github') => {
     setSocialLoading(provider);
@@ -25,7 +27,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
 
@@ -159,5 +161,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

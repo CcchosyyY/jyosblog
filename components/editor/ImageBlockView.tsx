@@ -1,8 +1,26 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
+
+// Domains configured in next.config.mjs remotePatterns
+const ALLOWED_IMAGE_HOSTS = [
+  'eshgriacghldbvaezpat.supabase.co',
+  'lh3.googleusercontent.com',
+  'avatars.githubusercontent.com',
+];
+
+function isOptimizable(src: string): boolean {
+  try {
+    const url = new URL(src);
+    return ALLOWED_IMAGE_HOSTS.includes(url.hostname);
+  } catch {
+    // Relative URLs or base64 are handled by Next.js
+    return !src.startsWith('data:');
+  }
+}
 
 // ─── Image Block View ─────────────────────────────────────────
 // Rendered as NodeView for existing images (with src)
@@ -38,11 +56,16 @@ export default function ImageBlockView({
         onMouseLeave={() => setShowToolbar(false)}
       >
         {/* Image */}
-        <img
+        <Image
           src={src}
           alt={alt}
           title={title}
+          width={0}
+          height={0}
+          sizes="(max-width: 768px) 100vw, 800px"
+          unoptimized={!isOptimizable(src)}
           className={`image-block-img ${selected ? 'image-block-selected' : ''}`}
+          style={{ width: '100%', height: 'auto' }}
           draggable={false}
         />
 

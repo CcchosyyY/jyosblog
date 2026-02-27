@@ -6,6 +6,8 @@ import {
 } from '@/lib/posts';
 import PostCard from '@/components/PostCard';
 import DevProjectFilter from '@/components/DevProjectFilter';
+import EmptyState from '@/components/EmptyState';
+import { FileText } from 'lucide-react';
 import { getProjects } from '@/lib/projects';
 import { notFound } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
@@ -83,11 +85,12 @@ export default async function CategoryPage({ params }: Props) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-muted">
-            이 카테고리에 작성된 글이 없습니다.
-          </p>
-        </div>
+        <EmptyState
+          icon={<FileText size={48} />}
+          title="작성된 글이 없습니다"
+          description={`${categoryName} 카테고리에 아직 작성된 글이 없습니다.`}
+          action={{ label: '전체 글 보기', href: '/' }}
+        />
       )}
     </div>
   );

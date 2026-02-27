@@ -13,6 +13,10 @@
   --muted: #000F0880;
   --subtle: #000F08B3;
   --surface: #F5F5F3;
+  --error: #DC2626;
+  --error-foreground: #DC2626;
+  --glow-primary: #B3001B;
+  --glow-accent: #5B21B6;
   --status-active: #22C55E;
   --status-completed: #135E90;
   --status-archived: #000F0880;
@@ -35,6 +39,10 @@
   --muted: #FFFFFF80;
   --subtle: #FFFFFFB3;
   --surface: #2D2D2D;
+  --error: #FF6B7A;
+  --error-foreground: #FF6B7A;
+  --glow-primary: #B3001B;
+  --glow-accent: #5B21B6;
   --status-active: #4ADE80;
   --status-completed: #5BA4D9;
   --status-archived: #FFFFFF80;

@@ -1,5 +1,7 @@
 import { getPostsByTag, getAllTags } from '@/lib/posts';
 import PostCard from '@/components/PostCard';
+import EmptyState from '@/components/EmptyState';
+import { Tag } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -61,19 +63,28 @@ export default async function TagPage({ params }: Props) {
       </div>
 
       {/* Posts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {posts.map((post) => (
-          <PostCard
-            key={post.slug}
-            title={post.title}
-            description={post.description}
-            date={post.date}
-            slug={post.slug}
-            tags={post.tags}
-            category={post.category}
-          />
-        ))}
-      </div>
+      {posts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {posts.map((post) => (
+            <PostCard
+              key={post.slug}
+              title={post.title}
+              description={post.description}
+              date={post.date}
+              slug={post.slug}
+              tags={post.tags}
+              category={post.category}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon={<Tag size={48} />}
+          title="태그에 해당하는 글이 없습니다"
+          description={`#${decodedTag} 태그가 달린 글이 아직 없습니다.`}
+          action={{ label: '전체 글 보기', href: '/' }}
+        />
+      )}
     </div>
   );
 }

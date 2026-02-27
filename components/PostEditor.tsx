@@ -2,14 +2,23 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { CATEGORIES } from '@/lib/categories';
 import { suggestCategory } from '@/lib/suggest-category';
 import type { Post } from '@/lib/supabase';
 import type { EditorInstance } from 'novel';
 import Image from 'next/image';
-import BlockEditor from '@/components/BlockEditor';
 import EditorHelpModal from '@/components/EditorHelpModal';
 import { markdownToHtml } from '@/lib/markdown-utils';
+
+const BlockEditor = dynamic(() => import('@/components/BlockEditor'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center min-h-[400px] px-8 py-6">
+      <p className="text-sm text-muted">에디터 로딩 중...</p>
+    </div>
+  ),
+});
 
 interface PostEditorProps {
   post?: Post;
