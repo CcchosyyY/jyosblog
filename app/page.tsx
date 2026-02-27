@@ -143,7 +143,7 @@ export default async function Home() {
                       } flex items-center justify-center`}
                     >
                       <svg
-                        className="w-8 h-8 text-muted/40"
+                        className="w-8 h-8 text-foreground/20"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

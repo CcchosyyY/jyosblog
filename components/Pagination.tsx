@@ -55,7 +55,7 @@ export default function Pagination({
           </svg>
         </Link>
       ) : (
-        <span className="p-2 rounded-lg text-muted/40">
+        <span className="p-2 rounded-lg text-foreground/20">
           <svg
             className="w-4 h-4"
             fill="none"
@@ -118,7 +118,7 @@ export default function Pagination({
           </svg>
         </Link>
       ) : (
-        <span className="p-2 rounded-lg text-muted/40">
+        <span className="p-2 rounded-lg text-foreground/20">
           <svg
             className="w-4 h-4"
             fill="none"

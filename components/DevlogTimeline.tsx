@@ -45,7 +45,7 @@ export default function DevlogTimeline({ posts }: DevlogTimelineProps) {
                 >
                   <div
                     className={`absolute inset-[3px] rounded-full ${
-                      index === 0 ? 'bg-primary' : 'bg-muted/50'
+                      index === 0 ? 'bg-primary' : 'bg-muted'
                     }`}
                   />
                 </div>

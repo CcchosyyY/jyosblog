@@ -155,7 +155,7 @@ function AdminLoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="w-full flex items-center justify-center gap-1.5 text-xs text-muted/60 hover:text-muted transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 text-xs text-foreground/30 hover:text-foreground/50 transition-colors"
           >
             <ChevronRight
               className={`w-3 h-3 transition-transform ${showPassword ? 'rotate-90' : ''}`}
