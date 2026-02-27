@@ -1,5 +1,73 @@
 # DID - 완료된 작업 기록
 
+## 2026-02-27: 로그인 리다이렉트, lucide-react, EmptyState, 메모 개선, 최적화
+
+로그인 후 원래 페이지로 돌아가기, 인라인 SVG → lucide-react 아이콘 교체, EmptyState 공통 컴포넌트 도입, 메모 검색/수정/정렬/DnD 기능 추가, 이미지/번들 최적화 등 8개 작업을 병렬 실행으로 완료.
+
+### 완료 항목
+
+- 로그인 후 원래 페이지로 돌아가기 (`next` 쿼리 파라미터 지원)
+- Vercel 환경변수 `SUPABASE_SERVICE_ROLE_KEY` 확인 (이미 설정됨)
+- EmptyState 공통 컴포넌트 생성 및 5개 페이지 적용
+- lucide-react 아이콘 도입 (6개 컴포넌트 인라인 SVG 교체)
+- admin/login 하드코딩 hex 색상 → CSS 변수 마이그레이션 (30+ 색상)
+- 이미지 최적화 (ImageBlockView `<img>` → `<Image>`)
+- 번들 최적화 (BlockEditor 동적 import)
+- 메모 검색/인라인 수정/정렬/드래그앤드롭 기능
+
+### 변경 파일
+
+| 파일 | 작업 | 내용 |
+|------|------|------|
+| `components/EmptyState.tsx` | NEW | 아이콘+제목+설명+CTA 공통 빈 상태 컴포넌트 |
+| `components/Header.tsx` | MODIFY | 로그인 링크에 `?next=` 현재 경로 파라미터 추가 |
+| `app/login/page.tsx` | MODIFY | next 파라미터 수신 + OAuth redirectTo에 전달 + Suspense 바운더리 |
+| `app/auth/callback/route.ts` | MODIFY | next 파라미터 추출 + Open Redirect 보안 검증 + 조건부 리다이렉트 |
+| `app/admin/login/page.tsx` | MODIFY | next 파라미터 지원 + lucide-react 아이콘 + hex→CSS 변수 전면 교체 + Suspense |
+| `app/about/page.tsx` | MODIFY | lucide-react 아이콘 교체 (Github, Mail) |
+| `components/AdminSidebar.tsx` | MODIFY | lucide-react 아이콘 교체 (LayoutGrid, Settings, Plus) |
+| `components/SearchModal.tsx` | MODIFY | lucide-react Search 아이콘 + EmptyState 적용 |
+| `components/MemoSidebar.tsx` | MODIFY | lucide-react Check + 검색 기능 추가 |
+| `app/memos/MemoList.tsx` | MODIFY | 검색/인라인 수정/정렬/드래그앤드롭 + EmptyState 적용 (498줄 확장) |
+| `components/QuickMemoWidget.tsx` | MODIFY | 검색 기능 추가 |
+| `app/projects/page.tsx` | MODIFY | EmptyState 적용 |
+| `app/blog/(list)/category/[category]/page.tsx` | MODIFY | EmptyState + CTA 적용 |
+| `app/blog/(list)/tag/[tag]/page.tsx` | MODIFY | EmptyState + CTA 적용 |
+| `components/editor/ImageBlockView.tsx` | MODIFY | `<img>` → next/image `<Image>` + isOptimizable 헬퍼 |
+| `components/PostEditor.tsx` | MODIFY | BlockEditor 동적 import (`next/dynamic`, ssr: false) |
+| `app/globals.css` | MODIFY | --error, --error-foreground, --glow-primary, --glow-accent 변수 추가 |
+| `tailwind.config.ts` | MODIFY | error, error-foreground, glow-primary, glow-accent 색상 등록 |
+| `package.json` | MODIFY | lucide-react 의존성 추가 |
+
+### 아키텍처
+
+```
+[로그인 리다이렉트 플로우]
+  Header (loginHref ?next=pathname)
+    → /login?next=/blog/post
+      → OAuth redirectTo: /auth/callback?next=/blog/post
+        → callback: 보안 검증(/ && !//) → 리다이렉트
+
+[EmptyState 컴포넌트]
+  components/EmptyState.tsx (icon, title, description, action)
+    ├─ projects/page.tsx (FolderOpen)
+    ├─ category/[category]/page.tsx (FileText + CTA)
+    ├─ tag/[tag]/page.tsx (Tag + CTA)
+    ├─ MemoList.tsx (StickyNote)
+    └─ SearchModal.tsx (SearchX)
+
+[메모 기능 개선]
+  MemoList.tsx
+    ├─ 검색 (클라이언트 필터링)
+    ├─ 인라인 수정 (textarea + PATCH API)
+    ├─ 정렬 (최신/오래된/카테고리)
+    └─ 드래그앤드롭 (HTML5 DnD, 로컬 상태)
+  MemoSidebar.tsx → 검색 추가
+  QuickMemoWidget.tsx → 검색 추가
+```
+
+---
+
 ## 2026-02-27: Block Editor 마이그레이션 + DevProjectFilter 아코디언 리디자인
 
 MarkdownToolbar를 Tiptap/Novel 기반 BlockEditor로 교체하고, 개발 카테고리 페이지의 DevProjectFilter를 프로젝트별 아코디언 섹션 + 넷플릭스 스타일 가로 스크롤로 재설계.
