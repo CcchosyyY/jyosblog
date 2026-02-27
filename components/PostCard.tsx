@@ -54,7 +54,7 @@ export default function PostCard({
           <h3 className="mt-1.5 text-body-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
             {title}
           </h3>
-          <p className="mt-1.5 text-caption-sm text-subtle leading-relaxed line-clamp-2">
+          <p className="mt-1.5 text-caption-sm text-subtle leading-snug line-clamp-2">
             {description}
           </p>
         </div>

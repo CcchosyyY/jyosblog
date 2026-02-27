@@ -9,9 +9,10 @@ import type { Comment } from '@/lib/comments';
 
 interface CommentSectionProps {
   postId: string;
+  isAdmin?: boolean;
 }
 
-export default function CommentSection({ postId }: CommentSectionProps) {
+export default function CommentSection({ postId, isAdmin = false }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [content, setContent] = useState('');
@@ -176,11 +177,15 @@ export default function CommentSection({ postId }: CommentSectionProps) {
                   {pendingIds.has(comment.id) && (
                     <span className="text-caption text-muted">전송 중...</span>
                   )}
-                  {userId === comment.user_id &&
+                  {(userId === comment.user_id || isAdmin) &&
                     !pendingIds.has(comment.id) && (
                       <button
                         onClick={() => handleDelete(comment.id)}
-                        className="ml-auto text-caption text-muted hover:text-primary transition-colors"
+                        className={`ml-auto text-caption transition-colors ${
+                          isAdmin && userId !== comment.user_id
+                            ? 'text-muted hover:text-red-500'
+                            : 'text-muted hover:text-primary'
+                        }`}
                       >
                         삭제
                       </button>

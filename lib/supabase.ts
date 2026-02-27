@@ -58,6 +58,18 @@ export interface Post {
   published_at: string | null;
 }
 
+export interface TechStackItem {
+  name: string;
+  icon?: string;
+  category?: string;
+}
+
+export interface KeyMetricItem {
+  label: string;
+  value: string;
+  description?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -69,6 +81,9 @@ export interface Project {
   live_url: string | null;
   gradient: string | null;
   sort_order: number;
+  screenshots: string[];
+  tech_stack: TechStackItem[];
+  key_metrics: KeyMetricItem[];
   created_at: string;
   updated_at: string;
 }

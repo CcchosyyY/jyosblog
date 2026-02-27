@@ -2,8 +2,12 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getProjectBySlug } from '@/lib/projects';
 import { getPostsByProject } from '@/lib/posts';
+import { isAuthenticated } from '@/lib/auth';
 import StatusBadge from '@/components/StatusBadge';
-import DevlogTimeline from '@/components/DevlogTimeline';
+import PostCard from '@/components/PostCard';
+import ProjectTabs from '@/components/ProjectTabs';
+import ProjectOverview from '@/components/ProjectOverview';
+import AdminProjectEditButton from '@/components/AdminProjectEditButton';
 
 interface ProjectDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -29,9 +33,10 @@ export default async function ProjectDetailPage({
   params,
 }: ProjectDetailPageProps) {
   const { slug } = await params;
-  const [project, devlogs] = await Promise.all([
+  const [project, devlogs, isAdmin] = await Promise.all([
     getProjectBySlug(slug),
     getPostsByProject(slug),
+    isAuthenticated(),
   ]);
 
   if (!project) {
@@ -39,7 +44,7 @@ export default async function ProjectDetailPage({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
       {/* Back link */}
       <Link
         href="/projects"
@@ -64,15 +69,22 @@ export default async function ProjectDetailPage({
       {/* Project header */}
       <section className="space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-bold text-foreground">
-            {project.title}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-foreground">
+              {project.title}
+            </h1>
+            {isAdmin && (
+              <AdminProjectEditButton project={project} />
+            )}
+          </div>
           <StatusBadge status={project.status} />
         </div>
 
-        <p className="text-subtle text-sm leading-relaxed">
-          {project.long_description || project.description}
-        </p>
+        {project.description && (
+          <p className="text-subtle text-sm leading-relaxed">
+            {project.description}
+          </p>
+        )}
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5">
@@ -125,7 +137,7 @@ export default async function ProjectDetailPage({
                   d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
                 />
               </svg>
-              Live Site
+              Visit Site
             </a>
           )}
         </div>
@@ -134,17 +146,34 @@ export default async function ProjectDetailPage({
       {/* Divider */}
       <hr className="border-card-border" />
 
-      {/* Devlog timeline */}
-      <section className="space-y-6">
-        <h2 className="text-lg font-semibold text-foreground">
-          개발일지{' '}
-          <span className="text-muted font-normal">
-            ({devlogs.length})
-          </span>
-        </h2>
-
-        <DevlogTimeline posts={devlogs} />
-      </section>
+      {/* Tabs: Overview + DevLog */}
+      <ProjectTabs
+        overviewContent={<ProjectOverview project={project} />}
+        devlogContent={
+          devlogs.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {devlogs.map((post) => (
+                <PostCard
+                  key={post.id}
+                  title={post.title}
+                  description={post.description || ''}
+                  date={post.date}
+                  slug={post.slug}
+                  tags={post.tags}
+                  category={post.category}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted text-sm py-8 text-center">
+              아직 개발일지가 없습니다.
+            </p>
+          )
+        }
+        devlogCount={devlogs.length}
+        isAdmin={isAdmin}
+        projectSlug={slug}
+      />
     </div>
   );
 }

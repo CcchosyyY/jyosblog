@@ -1,13 +1,16 @@
 import { getPostBySlug, getAllPosts, getRelatedPosts } from '@/lib/posts';
+import { isAuthenticated } from '@/lib/auth';
 import { getCategoryName } from '@/lib/categories';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { Pencil } from 'lucide-react';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import TableOfContents from '@/components/TableOfContents';
 import ShareButtons from '@/components/ShareButtons';
 import LikeButton from '@/components/LikeButton';
 import ViewCounter from '@/components/ViewCounter';
 import CommentSection from '@/components/CommentSection';
+import AdminPostActions from '@/components/AdminPostActions';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -36,6 +39,8 @@ export default async function PostPage({ params }: Props) {
   if (!post) {
     notFound();
   }
+
+  const admin = await isAuthenticated();
 
   const relatedPosts = await getRelatedPosts(
     post.id,
@@ -69,9 +74,23 @@ export default async function PostPage({ params }: Props) {
 
         {/* Title Section */}
         <header className="flex flex-col gap-4">
-          <h1 className="text-heading-xl sm:text-4xl font-bold text-foreground">
-            {post.title}
-          </h1>
+          <div className="flex items-start gap-3">
+            <h1 className="text-heading-xl sm:text-4xl font-bold text-foreground flex-1">
+              {post.title}
+            </h1>
+            {admin && (
+              <div className="flex items-center gap-1.5 shrink-0 mt-1">
+                <Link
+                  href={`/admin/edit/${post.id}`}
+                  className="p-1.5 bg-surface/80 backdrop-blur-sm rounded-md text-muted hover:bg-surface hover:text-primary transition-all"
+                  title="수정"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Link>
+                <AdminPostActions postId={post.id} />
+              </div>
+            )}
+          </div>
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {post.tags.map((tag) => (
@@ -162,7 +181,7 @@ export default async function PostPage({ params }: Props) {
         )}
 
         {/* Comments */}
-        <CommentSection postId={post.id} />
+        <CommentSection postId={post.id} isAdmin={admin} />
       </div>
       </article>
     </div>

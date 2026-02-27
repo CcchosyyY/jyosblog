@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import BlogSidebar from '@/components/BlogSidebar';
 import { getAllPosts, getPostCountByCategory } from '@/lib/posts';
+import { isAuthenticated } from '@/lib/auth';
 import { getCategoryName, getCategoryColor, getCategoryIcon } from '@/lib/categories';
+import { Pencil } from 'lucide-react';
 
 const MOCK_POSTS = [
   {
@@ -80,6 +82,7 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 export default async function Home() {
   const postCounts = await getPostCountByCategory();
+  const admin = await isAuthenticated();
   const allPosts = await getAllPosts();
   const posts = allPosts.length > 0 ? allPosts : MOCK_POSTS;
   const recentPosts = posts.slice(0, 5);
@@ -102,10 +105,10 @@ export default async function Home() {
               </div>
               <ul>
                 {recentPosts.map((post, index) => (
-                  <li key={post.slug}>
+                  <li key={post.slug} className="relative group">
                     <Link
                       href={`/blog/${post.slug}`}
-                      className={`flex items-center justify-between px-4 py-2 group hover:bg-surface/60 transition-all duration-200 ${
+                      className={`flex items-center justify-between px-4 py-2 hover:bg-surface/60 transition-all duration-200 ${
                         index !== 0 ? 'border-t border-card-border' : ''
                       }`}
                     >
@@ -117,6 +120,15 @@ export default async function Home() {
                         {new Date(post.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
                       </time>
                     </Link>
+                    {admin && 'id' in post && (
+                      <Link
+                        href={`/admin/edit/${(post as { id: string }).id}`}
+                        className="absolute right-44 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-surface/80 backdrop-blur-sm rounded-md text-muted hover:bg-surface hover:text-primary z-10"
+                        title="수정"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -130,77 +142,87 @@ export default async function Home() {
             </h2>
             <div className="grid grid-cols-3 gap-4">
               {featuredPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group"
-                >
-                  <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-200 hover:scale-[1.03]">
-                    {/* Thumbnail */}
-                    <div
-                      className={`aspect-[16/10] bg-gradient-to-br ${
-                        CATEGORY_COLORS[post.category] || 'from-muted/20 to-muted/10'
-                      } flex items-center justify-center`}
-                    >
-                      <svg
-                        className="w-8 h-8 text-foreground/20"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
+                <div key={post.slug} className="relative group">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="block"
+                  >
+                    <article className="bg-card border border-card-border rounded-lg overflow-hidden shadow-sm hover:shadow-lg hover:border-primary/20 transition-all duration-200 group-hover:scale-[1.03]">
+                      {/* Thumbnail */}
+                      <div
+                        className={`aspect-[16/10] bg-gradient-to-br ${
+                          CATEGORY_COLORS[post.category] || 'from-muted/20 to-muted/10'
+                        } flex items-center justify-center`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d={
-                            CATEGORY_ICONS[post.category] ||
-                            'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'
-                          }
-                        />
-                      </svg>
-                    </div>
-                    {/* Content */}
-                    <div className="p-3">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <span className="flex items-center gap-1 text-caption-xs font-medium">
-                          <svg
-                            className="w-3 h-3 shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            style={{ color: getCategoryColor(post.category) }}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d={getCategoryIcon(post.category)} />
-                          </svg>
-                          {getCategoryName(post.category)}
-                        </span>
-                        <span className="text-caption-xs text-muted">
-                          {new Date(post.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}{' '}
-                          {new Date(post.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                        </span>
+                        <svg
+                          className="w-8 h-8 text-foreground/20"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d={
+                              CATEGORY_ICONS[post.category] ||
+                              'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'
+                            }
+                          />
+                        </svg>
                       </div>
-                      <h3 className="text-body-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
-                        {post.title}
-                      </h3>
-                      <p className="mt-1 text-caption-sm text-subtle leading-snug line-clamp-2 min-h-[2.3rem] max-h-[2.3rem] overflow-hidden">
-                        {post.description || '\u00A0'}
-                      </p>
-                      {post.tags && post.tags.length > 0 && (
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {post.tags.slice(0, 5).map((tag: string) => (
-                            <span
-                              key={tag}
-                              className="px-1 text-[9px] leading-4 text-muted bg-surface rounded"
+                      {/* Content */}
+                      <div className="p-3">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="flex items-center gap-1 text-caption-xs font-medium">
+                            <svg
+                              className="w-3 h-3 shrink-0"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2}
+                              style={{ color: getCategoryColor(post.category) }}
                             >
-                              #{tag}
-                            </span>
-                          ))}
+                              <path strokeLinecap="round" strokeLinejoin="round" d={getCategoryIcon(post.category)} />
+                            </svg>
+                            {getCategoryName(post.category)}
+                          </span>
+                          <span className="text-caption-xs text-muted">
+                            {new Date(post.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}{' '}
+                            {new Date(post.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  </article>
-                </Link>
+                        <h3 className="text-body-sm font-semibold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-1">
+                          {post.title}
+                        </h3>
+                        <p className="mt-1 text-caption-sm text-subtle leading-snug line-clamp-2">
+                          {post.description || '\u00A0'}
+                        </p>
+                        {post.tags && post.tags.length > 0 && (
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {post.tags.slice(0, 5).map((tag: string) => (
+                              <span
+                                key={tag}
+                                className="px-1 text-[9px] leading-4 text-muted bg-surface rounded"
+                              >
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  </Link>
+                  {admin && 'id' in post && (
+                    <Link
+                      href={`/admin/edit/${(post as { id: string }).id}`}
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-surface/80 backdrop-blur-sm rounded-md text-muted hover:bg-surface hover:text-primary z-10"
+                      title="수정"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           </div>

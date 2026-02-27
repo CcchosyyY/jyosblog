@@ -1,7 +1,9 @@
 import { Suspense } from 'react';
 import { getProjects, getDevlogCountByProject } from '@/lib/projects';
+import { isAuthenticated } from '@/lib/auth';
 import ProjectCard from '@/components/ProjectCard';
 import ProjectFilter from '@/components/ProjectFilter';
+import AdminProjectButton from '@/components/AdminProjectButton';
 import EmptyState from '@/components/EmptyState';
 import { FolderOpen } from 'lucide-react';
 import type { ProjectStatus } from '@/lib/projects';
@@ -18,9 +20,11 @@ interface ProjectsPageProps {
 async function ProjectList({
   status,
   query,
+  isAdmin,
 }: {
   status?: string;
   query?: string;
+  isAdmin: boolean;
 }) {
   const validStatuses: ProjectStatus[] = [
     'active',
@@ -65,6 +69,7 @@ async function ProjectList({
           key={project.id}
           project={project}
           devlogCount={devlogCounts[project.id] || 0}
+          isAdmin={isAdmin}
         />
       ))}
     </div>
@@ -75,12 +80,16 @@ export default async function ProjectsPage({
   searchParams,
 }: ProjectsPageProps) {
   const { status, q } = await searchParams;
+  const isAdmin = await isAuthenticated();
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-      <Suspense fallback={null}>
-        <ProjectFilter />
-      </Suspense>
+      <div className="flex items-center justify-between gap-3">
+        <Suspense fallback={null}>
+          <ProjectFilter />
+        </Suspense>
+        {isAdmin && <AdminProjectButton />}
+      </div>
 
       <Suspense
         fallback={
@@ -101,7 +110,7 @@ export default async function ProjectsPage({
           </div>
         }
       >
-        <ProjectList status={status} query={q} />
+        <ProjectList status={status} query={q} isAdmin={isAdmin} />
       </Suspense>
     </div>
   );

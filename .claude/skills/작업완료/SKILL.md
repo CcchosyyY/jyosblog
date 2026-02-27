@@ -74,21 +74,35 @@ git log --oneline --since="today" --format="%h %s"
 git diff HEAD~N --name-status  # N은 오늘 커밋 수
 ```
 
-#### 2b. TODO.md 업데이트
+#### 2b. TODO.md 전체 항목 유효성 검증
 
-1. 완료된 항목을 `[ ]` → `[x]`로 변경
+오늘 작업과 무관하게, TODO.md **전체 항목**을 검토하여 정리:
+
+1. **이전 세션에서 이미 완료된 항목** — `[x]`인데 "완료" 섹션에 안 옮겨진 항목을 "완료" 섹션으로 이동
+2. **상황 변경으로 무의미해진 항목** — 이미 구현됐거나, 삭제된 기능 관련 항목 제거
+3. **중복 항목** — 동일/유사한 항목이 여러 곳에 있으면 하나로 통합
+4. **완료 섹션 정리** — `[x]` 항목이 높은/중간/낮은 우선순위 섹션에 남아있으면 "완료" 섹션으로 이동
+
+#### 2c. TODO.md 업데이트
+
+1. 이번 세션에서 완료된 항목을 `[ ]` → `[x]`로 변경
 2. 세션 중 발견된 새로운 할 일이 있으면 적절한 우선순위 섹션에 추가
+3. 2b에서 발견된 정리 사항 반영
 
 **규칙:**
 - 기존 TODO.md 형식 유지 (높은/중간/낮은 우선순위 + 하위 카테고리)
 - 이미 있는 항목 중복 추가 금지
 - 새 항목은 `- [ ]` 형식으로 추가
 
-#### 2c. DID.md에 완료 항목 기록
+#### 2d. DID.md에 완료 항목 기록
 
 파일: `/home/chosangyun/MyBlog/DID.md`
 
-TODO.md에서 이번 세션에 완료 처리된 항목들 + 커밋 내용을 분석하여 DID.md에 기록.
+다음 3가지를 종합하여 오늘의 DID 항목을 작성합니다:
+
+1. **세션 내용** — 이번 세션에서 실제로 수행한 작업, 대화 맥락
+2. **Git 변경사항** — `git log --since="today"`, `git diff` 등으로 확인한 코드 변경
+3. **TODO.md** — 완료 처리할 항목, 새로 발견된 TODO
 
 **기존 형식을 반드시 유지:**
 
@@ -154,7 +168,7 @@ SUPABASE_KEY=$(grep NEXT_PUBLIC_SUPABASE_ANON_KEY .env.local | cut -d'=' -f2)
 
 # slug 생성: devlog-YYYY-MM-DD
 SLUG="devlog-$(date +%Y-%m-%d)"
-TODAY=$(date +%Y-%m-%d)
+NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)  # 현재 시각 UTC ISO 8601
 
 # project_id 결정: 현재 프로젝트 디렉토리 기준
 # - MyBlog 디렉토리 → "jyos-blog"
@@ -174,7 +188,7 @@ curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
     "category": "dev",
     "tags": ["devlog"],
     "status": "published",
-    "published_at": "'${TODAY}'T00:00:00.000Z",
+    "published_at": "'${NOW}'",
     "project_id": "'${PROJECT_ID}'"
   }'
 ```
@@ -190,14 +204,40 @@ curl -s -X POST "${SUPABASE_URL}/rest/v1/posts" \
 
 curl 응답에서 `id`가 포함되면 성공. 실패 시 에러 메시지를 사용자에게 보여주고 수동 발행 안내.
 
-### Step 4: DID.md, TODO.md 커밋 + Push
+### Step 4: DID.md 오래된 항목 정리
 
-Step 2에서 변경된 DID.md, TODO.md를 추가 커밋:
+블로그 발행이 완료된 후, DID.md에서 **최근 3개 날짜(고유 날짜 기준)만 유지**하고 나머지는 삭제합니다.
+
+#### 로직
+
+1. DID.md에서 `## YYYY-MM-DD` 패턴의 날짜 헤더를 모두 찾습니다.
+2. 고유 날짜를 추출하여 최신순 정렬합니다. (같은 날짜에 여러 항목이 있으면 같은 날짜로 카운트)
+3. **최근 3개 고유 날짜에 해당하는 항목만 유지**합니다.
+4. 4번째 이후 날짜의 항목은 해당 섹션 전체(`## 날짜` ~ 다음 `## 날짜` 또는 파일 끝)를 삭제합니다.
+
+#### 예시
+
+작업 날짜가 1일, 2일, 5일, 10일이었다면:
+- 유지: 10일, 5일, 2일 (최근 3개 날짜)
+- 삭제: 1일
+
+같은 날짜에 3개 항목이 있어도 1개 날짜로 카운트:
+- 2/28(1개), 2/27(3개), 2/25(2개), 2/23(1개) → 2/28, 2/27, 2/25 유지, 2/23 삭제
+
+#### 주의사항
+
+- `# DID` 제목 헤더는 항상 유지합니다.
+- 각 날짜 섹션 사이의 `---` 구분선도 함께 관리합니다.
+- 삭제된 항목은 이미 블로그에 발행되어 있으므로 데이터 유실 없음.
+
+### Step 5: DID.md, TODO.md 커밋 + Push
+
+Step 2~4에서 변경된 DID.md, TODO.md를 추가 커밋:
 
 ```bash
 git add DID.md TODO.md
 git commit -m "$(cat <<'EOF'
-Update DID.md and TODO.md for session wrap-up
+docs: DID.md/TODO.md 업데이트 (YYYY-MM-DD)
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
@@ -205,7 +245,7 @@ EOF
 git push origin main
 ```
 
-### Step 5: 완료 리포트
+### Step 6: 완료 리포트
 
 ```markdown
 ## 작업완료 리포트
@@ -222,6 +262,10 @@ git push origin main
 ### 블로그
 - 발행: <포스트 제목>
 - URL: https://jyos-blog.vercel.app/blog/<slug>
+
+### DID.md 정리
+- 유지: N개 날짜 (M개 항목)
+- 삭제: N개 날짜 (M개 항목)
 ```
 
 ## Related Files
